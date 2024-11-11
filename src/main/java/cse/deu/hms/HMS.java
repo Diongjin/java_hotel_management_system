@@ -13,5 +13,6 @@ public class HMS {
     public static void main(String[] args) {
         System.out.println("Hello World!");
         System.out.println("이민석바보");
+        System.out.println("ddd");
     }
 }
