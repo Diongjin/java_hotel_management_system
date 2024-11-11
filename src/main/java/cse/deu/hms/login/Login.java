@@ -172,7 +172,8 @@ public class Login extends javax.swing.JFrame {
     private void logbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logbuttonActionPerformed
         // TODO add your handling code here:
         String id = idTextField.getText();  // 아이디 입력
-        String pass = new String(passTextField.getPassword());  // 비밀번호 입력
+        char[] cpass = passTextField.getPassword(); // 메모리 남아있음을 방지 
+        String pass = new String(cpass);    // 비밀번호 입력
 
         if (id.isEmpty() || pass.isEmpty()) {
             JOptionPane.showMessageDialog(this, "아이디와 비밀번호를 입력해주세요.");    // 아이디 또는 비밀번호 미입력시 아래 문구 출력
