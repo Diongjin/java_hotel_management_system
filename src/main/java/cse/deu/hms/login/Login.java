@@ -182,6 +182,8 @@ public class Login extends javax.swing.JFrame {
         else {
             if (id.equals("admin") && pass.equals("1234")) {
                 JOptionPane.showMessageDialog(null, "로그인 완료"); // 로그인 버튼 클릭시 로그인 완료라는 문구 출력
+                new Management().setVisible(true);  //기존 프레임을 닫고 관리 프레임 오픈
+                dispose();  // 프레임 종료
             }
             else {
                 JOptionPane.showMessageDialog(this, "아이디와 비밀번호를 재입력 해주세요");
