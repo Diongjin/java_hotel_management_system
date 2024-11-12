@@ -15,6 +15,7 @@ public class ReservationManagement extends javax.swing.JFrame {
      */
     public ReservationManagement() {
         initComponents();
+        setLocationRelativeTo(null); // 로그인 프레임과 다이얼로그 창 위치 정중앙.
     }
 
     /**
