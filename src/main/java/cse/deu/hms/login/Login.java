@@ -189,6 +189,7 @@ public class Login extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "아이디와 비밀번호를 재입력 해주세요");
                 idTextField.setText("");
                 passTextField.setText("");
+                //dd
             }
         }
     }//GEN-LAST:event_logbuttonActionPerformed
