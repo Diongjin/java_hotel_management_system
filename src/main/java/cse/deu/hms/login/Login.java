@@ -4,6 +4,7 @@
  */
 package cse.deu.hms.login;
 
+import cse.deu.hms.login.logintext;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -34,13 +35,13 @@ public class Login extends javax.swing.JFrame {
         jTextArea1 = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         logbutton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         passTextField = new javax.swing.JPasswordField();
         idTextField = new javax.swing.JTextField();
+        canCelButton = new javax.swing.JButton();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -48,7 +49,7 @@ public class Login extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setForeground(new java.awt.Color(204, 204, 204));
 
         logbutton.setBackground(new java.awt.Color(153, 153, 153));
@@ -60,22 +61,13 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        cancelButton.setBackground(new java.awt.Color(153, 153, 153));
-        cancelButton.setForeground(new java.awt.Color(0, 0, 0));
-        cancelButton.setText("취소");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
         jLabel1.setBackground(new java.awt.Color(153, 153, 153));
         jLabel1.setFont(new java.awt.Font("나눔고딕 ExtraBold", 0, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Hotel Management Login");
 
-        jPanel2.setBackground(new java.awt.Color(153, 153, 153));
+        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
         jPanel2.setForeground(new java.awt.Color(0, 0, 0));
 
         jLabel2.setFont(new java.awt.Font("맑은 고딕", 0, 15)); // NOI18N
@@ -124,33 +116,43 @@ public class Login extends javax.swing.JFrame {
                 .addContainerGap(41, Short.MAX_VALUE))
         );
 
+        canCelButton.setBackground(new java.awt.Color(153, 153, 153));
+        canCelButton.setForeground(new java.awt.Color(0, 0, 0));
+        canCelButton.setText("취소");
+        canCelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                canCelButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(55, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(logbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(68, 68, 68)
-                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(80, 80, 80))
+                .addContainerGap(59, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(logbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(60, 60, 60)
+                        .addComponent(canCelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(91, 91, 91))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(46, 46, 46))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(logbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(logbutton, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(canCelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(33, 33, 33))
         );
 
@@ -172,31 +174,42 @@ public class Login extends javax.swing.JFrame {
     private void logbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logbuttonActionPerformed
         // TODO add your handling code here:
         String id = idTextField.getText();  // 아이디 입력
+        
         char[] cpass = passTextField.getPassword(); // 메모리 남아있음을 방지 
         String pass = new String(cpass);    // 비밀번호 입력
 
+        logintext lt = new logintext();
+
+        int keypoint = lt.UserCheck(id, pass);
+
         if (id.isEmpty() || pass.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "아이디와 비밀번호를 입력해주세요.");    // 아이디 또는 비밀번호 미입력시 아래 문구 출력
-            
+            JOptionPane.showMessageDialog(this, "아이디와 비밀번호를 입력해주세요.");    
+            // 아이디 또는 비밀번호 미입력시 아래 문구 출력    
         } 
         else {
-            if (id.equals("admin") && pass.equals("1234")) {
-                JOptionPane.showMessageDialog(null, "로그인 완료"); // 로그인 버튼 클릭시 로그인 완료라는 문구 출력
-                new Management().setVisible(true);  //관리 프레임 오픈
-                dispose();  // 기존 프레임 종료
-            }
+            if (keypoint == 1) {
+                JOptionPane.showMessageDialog(null, "관리자 로그인 완료");
+                new Management().setVisible(true);
+                dispose();
+            } 
+            else if (keypoint == 99) {
+                JOptionPane.showMessageDialog(null, "직원 로그인 완료");
+                new Employee().setVisible(true);
+                dispose();
+            } 
             else {
                 JOptionPane.showMessageDialog(this, "아이디와 비밀번호를 재입력 해주세요");
                 idTextField.setText("");
                 passTextField.setText("");
             }
         }
+
     }//GEN-LAST:event_logbuttonActionPerformed
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+    private void canCelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_canCelButtonActionPerformed
         // TODO add your handling code here:
-        System.exit(0); // 취소 버튼 클릭시 시스템 종료.
-    }//GEN-LAST:event_cancelButtonActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_canCelButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -233,7 +246,7 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton canCelButton;
     private javax.swing.JTextField idTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
