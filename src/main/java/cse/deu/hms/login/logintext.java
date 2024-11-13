@@ -47,7 +47,7 @@ public class logintext {
         for (String entry : id_list) {
             String[] info_list = entry.split("\t");
         
-            if (info_list.length >= 3 && info_list[1].equals(cid) && info_list[2].equals(cpass)) {
+            if (info_list[1].equals(cid) && info_list[2].equals(cpass)) {
                 // 기본적으로 직원으로 가정
                 login_return = 99;    // 직원 로그인 코드 리턴값
                 // parts[3]이 "M"일 경우 관리자로 판단

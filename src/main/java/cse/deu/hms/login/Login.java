@@ -79,11 +79,11 @@ public class Login extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Pass   :   ");
 
-        passTextField.setBackground(new java.awt.Color(204, 204, 204));
+        passTextField.setBackground(new java.awt.Color(153, 153, 153));
         passTextField.setForeground(new java.awt.Color(0, 0, 0));
         passTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        idTextField.setBackground(new java.awt.Color(204, 204, 204));
+        idTextField.setBackground(new java.awt.Color(153, 153, 153));
         idTextField.setForeground(new java.awt.Color(0, 0, 0));
         idTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
