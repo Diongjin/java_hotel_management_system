@@ -17,7 +17,7 @@ public class Management extends javax.swing.JFrame {
     public Management() {
         initComponents();
         setLocationRelativeTo(null);
-        //ddd
+        //dddㅇㄹㄴㅇ
     }
 
     /**
