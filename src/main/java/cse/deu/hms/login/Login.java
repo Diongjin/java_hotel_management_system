@@ -189,7 +189,7 @@ public class Login extends javax.swing.JFrame {
         else {
             if (keypoint == 1) {
                 JOptionPane.showMessageDialog(null, "관리자 로그인 완료");
-                new Management2().setVisible(true);
+                new Management().setVisible(true);
                 dispose();
             } 
             else if (keypoint == 99) {
