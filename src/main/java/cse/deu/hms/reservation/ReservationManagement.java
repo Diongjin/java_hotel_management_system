@@ -15,6 +15,7 @@ public class ReservationManagement extends javax.swing.JFrame {
      */
     public ReservationManagement() {
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
