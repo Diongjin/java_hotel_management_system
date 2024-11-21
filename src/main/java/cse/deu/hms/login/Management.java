@@ -6,6 +6,7 @@ package cse.deu.hms.login;
 
 import cse.deu.hms.reservation.ReservationManagement;
 import cse.deu.hms.checkIn.CheckInOut;
+
 /**
  *
  * @author SAMSUNG
@@ -288,6 +289,7 @@ public class Management extends javax.swing.JFrame {
         ReservationManagement rm = new ReservationManagement();
         rm.setVisible(true);
         rm.setLocationRelativeTo(null);
+        dispose(); // 현재 창 닫기
     }//GEN-LAST:event_reservationButton1ActionPerformed
 
     private void checkInButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkInButton1ActionPerformed

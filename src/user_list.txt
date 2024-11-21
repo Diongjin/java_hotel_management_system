@@ -1,3 +1,2 @@
-1	admin	1234	M
-2	user1		pass1	E
-3	user2		pass2	E
+M	admin	1234
+E	user1	pass1

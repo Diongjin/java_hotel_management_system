@@ -5,6 +5,7 @@
 package cse.deu.hms.login;
 
 import cse.deu.hms.login.logintext;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -177,7 +178,7 @@ public class Login extends javax.swing.JFrame {
         
         char[] cpass = passTextField.getPassword(); // 메모리 남아있음을 방지 
         String pass = new String(cpass);    // 비밀번호 입력
-
+        
         logintext lt = new logintext();
 
         int keypoint = lt.UserCheck(id, pass);
@@ -243,6 +244,8 @@ public class Login extends javax.swing.JFrame {
                 new Login().setVisible(true);
             }
         });
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
