@@ -1245,13 +1245,15 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="cancelButton" min="-2" pref="85" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Component id="detailPrice" min="-2" pref="85" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="deleteButton" min="-2" pref="85" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="updataButton" min="-2" pref="85" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="addButton" min="-2" pref="85" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane2" pref="835" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" pref="987" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -1274,6 +1276,7 @@
                       <Component id="addButton" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                       <Component id="updataButton" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                       <Component id="deleteButton" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                      <Component id="detailPrice" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                   </Group>
                   <Component id="cancelButton" alignment="1" min="-2" pref="33" max="-2" attributes="0"/>
               </Group>
@@ -1350,6 +1353,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="updataButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="detailPrice">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#xc0c1;&#xc138;&#xae08;&#xc561;"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="detailPriceActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

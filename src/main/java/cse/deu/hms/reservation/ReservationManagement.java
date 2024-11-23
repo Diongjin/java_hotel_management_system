@@ -40,7 +40,7 @@ public class ReservationManagement extends javax.swing.JFrame {
     private JDateChooser checkInDateChooser;
     private JDateChooser checkOutDateChooser;
     private ArrayList<String[]> reservationList;  // 예약 정보를 담을 리스트
-
+    
     public ReservationManagement() {
         initComponents();
         additionalInit();
@@ -230,6 +230,7 @@ public class ReservationManagement extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         updataButton = new javax.swing.JButton();
+        detailPrice = new javax.swing.JButton();
 
         jLabel2.setFont(new java.awt.Font("맑은 고딕", 1, 18)); // NOI18N
         jLabel2.setText("추가 등록");
@@ -1043,6 +1044,13 @@ public class ReservationManagement extends javax.swing.JFrame {
             }
         });
 
+        detailPrice.setText("상세금액");
+        detailPrice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                detailPriceActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -1053,12 +1061,14 @@ public class ReservationManagement extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(detailPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(updataButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 835, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 987, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -1076,7 +1086,8 @@ public class ReservationManagement extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(updataButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(detailPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(cancelButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -1289,71 +1300,70 @@ public class ReservationManagement extends javax.swing.JFrame {
         Date checkInDate = checkInDateChooser.getDate();
         Date checkOutDate = checkOutDateChooser.getDate();
 
-        // 유효성 검사: 날짜가 선택되지 않은 경우
         if (checkInDate == null || checkOutDate == null) {
             JOptionPane.showMessageDialog(this, "체크인 및 체크아웃 날짜를 선택해주세요.");
             return;
         }
 
-        // 유효성 검사: 체크아웃 날짜가 체크인 날짜보다 이전이거나 같은 경우
         if (!checkOutDate.after(checkInDate)) {
             JOptionPane.showMessageDialog(this, "체크아웃 날짜는 체크인 날짜 이후여야 합니다.");
             return;
         }
 
-        // 객실 번호 가져오기 및 유효성 검사
         String roomNumber = jTextField3.getText().trim();
         if (roomNumber.isEmpty()) {
             JOptionPane.showMessageDialog(this, "객실 번호를 입력하거나 조회 버튼을 사용하여 선택하세요.");
             return;
         }
 
-        // 중복 확인: 이미 예약된 객실 번호인 경우
         if (isRoomNumberDuplicate(roomNumber, null)) {
             JOptionPane.showMessageDialog(this, "이미 예약된 객실 번호입니다. 다른 객실 번호를 입력하세요.");
             return;
         }
 
-        // 기타 입력 값 가져오기
         String uniqueId = generateUniqueId();
         String lastName = jTextField1.getText().trim();
         String firstName = jTextField2.getText().trim();
-        String guestName = lastName + " " + firstName; // 성과 이름 결합
+        String guestName = lastName + " " + firstName;
         String phoneNumber = jTextField9.getText().trim() + "-" + centerNum.getText().trim() + "-" + backNum.getText().trim();
         String guestCount = (String) jComboBox1.getSelectedItem();
         String roomRate = jTextField5.getText().trim();
         String paymentMethod = jRadioButton1.isSelected() ? "카드" : jRadioButton2.isSelected() ? "현금" : "";
 
-        // 유효성 검사: 필드가 비어 있는지 확인
         if (guestName.isEmpty() || phoneNumber.isEmpty() || guestCount.isEmpty() || roomRate.isEmpty() || paymentMethod.isEmpty()) {
             JOptionPane.showMessageDialog(this, "모든 필드를 올바르게 입력해주세요.");
             return;
         }
 
-        // 날짜를 문자열로 변환
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String checkInStr = dateFormat.format(checkInDate);
         String checkOutStr = dateFormat.format(checkOutDate);
 
-        // 예약 데이터 추가
         String[] newReservation = {
             uniqueId, roomNumber, guestName, phoneNumber, guestCount, roomRate, checkInStr, checkOutStr, paymentMethod
         };
         reservationList.add(newReservation);
 
-        // 파일에 저장
         saveReservations();
-
-        // 테이블 갱신
         showClientInfo();
 
-        // 성공 메시지 출력 및 추가 등록 창 닫기
         JOptionPane.showMessageDialog(this, "예약이 추가되었습니다.");
         addReservation.dispose();
 
-        // 필드 초기화
+        // 입력 필드 초기화
         resetFields();
+        resetCardFields();
     }//GEN-LAST:event_realAddButtonActionPerformed
+
+    private void resetCardFields() {
+        jTextField10.setText("");
+        jTextField20.setText("");
+        jTextField12.setText("");
+        jTextField21.setText("");
+        jTextField13.setText("");
+        jTextField14.setText("");
+        jTextField19.setText("");
+    }
 
     private String generateUniqueId() {
         ArrayList<Integer> existingIds = new ArrayList<>();
@@ -1640,7 +1650,7 @@ public class ReservationManagement extends javax.swing.JFrame {
 
     private void cancelCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelCardActionPerformed
         // TODO add your handling code here:
-        dispose();
+        registerCard.dispose();
     }//GEN-LAST:event_cancelCardActionPerformed
 
     private void addCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCardActionPerformed
@@ -1715,6 +1725,10 @@ public class ReservationManagement extends javax.swing.JFrame {
         // TODO add your handling code here:
         change_Card.dispose();
     }//GEN-LAST:event_registeCard1ActionPerformed
+
+    private void detailPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailPriceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_detailPriceActionPerformed
 
     private String loadFloorPrice(String roomNumber) {
         if (roomNumber == null || roomNumber.isEmpty()) {
@@ -1915,6 +1929,7 @@ public class ReservationManagement extends javax.swing.JFrame {
     private javax.swing.JButton checkoutdate;
     private javax.swing.JButton checkoutdate2;
     private javax.swing.JButton deleteButton;
+    private javax.swing.JButton detailPrice;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel jLabel1;
