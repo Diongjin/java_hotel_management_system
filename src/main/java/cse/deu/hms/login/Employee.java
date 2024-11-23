@@ -4,8 +4,11 @@
  */
 package cse.deu.hms.login;
 
-import cse.deu.hms.reservation.ReservationManagement;
+
 import cse.deu.hms.reservation.*;
+import cse.deu.hms.checkIn.*;
+import cse.deu.hms.Roomservice.*;
+import cse.deu.hms.Restaurantservice.*;
 /**
  *
  * @author SAMSUNG
@@ -217,14 +220,23 @@ public class Employee extends javax.swing.JFrame {
 
     private void checkInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkInButtonActionPerformed
         // TODO add your handling code here:
+        CheckInOut cio = new CheckInOut();
+        cio.setVisible(true);
+        cio.setLocationRelativeTo(null);
     }//GEN-LAST:event_checkInButtonActionPerformed
 
     private void roomServiceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roomServiceButtonActionPerformed
         // TODO add your handling code here:
+        RoomService rs = new RoomService();
+        rs.setVisible(true);
+        rs.setLocationRelativeTo(null);
     }//GEN-LAST:event_roomServiceButtonActionPerformed
 
     private void restaurantButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restaurantButtonActionPerformed
         // TODO add your handling code here:
+        Restaurant rt = new Restaurant();
+        rt.setVisible(true);
+        rt.setLocationRelativeTo(null);
     }//GEN-LAST:event_restaurantButtonActionPerformed
 
     private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed

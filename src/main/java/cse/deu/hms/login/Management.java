@@ -6,7 +6,8 @@ package cse.deu.hms.login;
 
 import cse.deu.hms.reservation.ReservationManagement;
 import cse.deu.hms.checkIn.CheckInOut;
-
+import cse.deu.hms.Restaurantservice.*;
+import cse.deu.hms.Roomservice.*;
 /**
  *
  * @author SAMSUNG
@@ -38,8 +39,8 @@ public class Management extends javax.swing.JFrame {
         checkInButton1 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        restaurantButton1 = new javax.swing.JButton();
-        roomServiceButton1 = new javax.swing.JButton();
+        hotelManagement = new javax.swing.JButton();
+        monayandevery = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         restaurantButton = new javax.swing.JButton();
@@ -110,22 +111,22 @@ public class Management extends javax.swing.JFrame {
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("총 관리");
 
-        restaurantButton1.setBackground(new java.awt.Color(153, 153, 153));
-        restaurantButton1.setForeground(new java.awt.Color(0, 0, 0));
-        restaurantButton1.setText("호텔관리");
-        restaurantButton1.addActionListener(new java.awt.event.ActionListener() {
+        hotelManagement.setBackground(new java.awt.Color(153, 153, 153));
+        hotelManagement.setForeground(new java.awt.Color(0, 0, 0));
+        hotelManagement.setText("호텔관리");
+        hotelManagement.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                restaurantButton1ActionPerformed(evt);
+                hotelManagementActionPerformed(evt);
             }
         });
 
-        roomServiceButton1.setBackground(new java.awt.Color(153, 153, 153));
-        roomServiceButton1.setForeground(new java.awt.Color(0, 0, 0));
-        roomServiceButton1.setText("<html>수익 및<br>점유율</html>");
-        roomServiceButton1.setToolTipText("");
-        roomServiceButton1.addActionListener(new java.awt.event.ActionListener() {
+        monayandevery.setBackground(new java.awt.Color(153, 153, 153));
+        monayandevery.setForeground(new java.awt.Color(0, 0, 0));
+        monayandevery.setText("<html>수익 및<br>점유율</html>");
+        monayandevery.setToolTipText("");
+        monayandevery.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                roomServiceButton1ActionPerformed(evt);
+                monayandeveryActionPerformed(evt);
             }
         });
 
@@ -139,9 +140,9 @@ public class Management extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(60, 60, 60)
-                .addComponent(restaurantButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(hotelManagement, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(roomServiceButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(monayandevery, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
@@ -151,8 +152,8 @@ public class Management extends javax.swing.JFrame {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(restaurantButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(roomServiceButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(hotelManagement, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(monayandevery, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -289,7 +290,6 @@ public class Management extends javax.swing.JFrame {
         ReservationManagement rm = new ReservationManagement();
         rm.setVisible(true);
         rm.setLocationRelativeTo(null);
-        dispose(); // 현재 창 닫기
     }//GEN-LAST:event_reservationButton1ActionPerformed
 
     private void checkInButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkInButton1ActionPerformed
@@ -299,20 +299,26 @@ public class Management extends javax.swing.JFrame {
         io.setLocationRelativeTo(null);
     }//GEN-LAST:event_checkInButton1ActionPerformed
 
-    private void restaurantButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restaurantButton1ActionPerformed
+    private void hotelManagementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hotelManagementActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_restaurantButton1ActionPerformed
+    }//GEN-LAST:event_hotelManagementActionPerformed
 
-    private void roomServiceButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roomServiceButton1ActionPerformed
+    private void monayandeveryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_monayandeveryActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_roomServiceButton1ActionPerformed
+    }//GEN-LAST:event_monayandeveryActionPerformed
 
     private void restaurantButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restaurantButtonActionPerformed
         // TODO add your handling code here:
+        Restaurant rt = new Restaurant();
+        rt.setVisible(true);
+        rt.setLocationRelativeTo(null);
     }//GEN-LAST:event_restaurantButtonActionPerformed
 
     private void roomServiceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roomServiceButtonActionPerformed
         // TODO add your handling code here:
+        RoomService rs = new RoomService();
+        rs.setVisible(true);
+        rs.setLocationRelativeTo(null);
     }//GEN-LAST:event_roomServiceButtonActionPerformed
 
     private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed
@@ -361,6 +367,7 @@ public class Management extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton checkInButton1;
+    private javax.swing.JButton hotelManagement;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
@@ -371,10 +378,9 @@ public class Management extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JButton logOutButton;
+    private javax.swing.JButton monayandevery;
     private javax.swing.JButton reservationButton1;
     private javax.swing.JButton restaurantButton;
-    private javax.swing.JButton restaurantButton1;
     private javax.swing.JButton roomServiceButton;
-    private javax.swing.JButton roomServiceButton1;
     // End of variables declaration//GEN-END:variables
 }
