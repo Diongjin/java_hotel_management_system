@@ -941,7 +941,7 @@ public class HotelManagement extends javax.swing.JFrame {
 
         // 중복 검사
         if (isMenuDuplicate(menuName, menuType)) {
-            JOptionPane.showMessageDialog(this, "이미 존재하는 메뉴입니다. 다른 메뉴 이름을 입력하세요.", "중복 오류", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "이미 존재하는 메뉴입니다.");
             return;
         }
 

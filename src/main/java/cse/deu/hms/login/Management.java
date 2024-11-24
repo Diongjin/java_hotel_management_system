@@ -8,6 +8,8 @@ import cse.deu.hms.reservation.ReservationManagement;
 import cse.deu.hms.checkIn.CheckInOut;
 import cse.deu.hms.Restaurantservice.*;
 import cse.deu.hms.Roomservice.*;
+import cse.deu.hms.totalManagement.HotelManagement;
+import cse.deu.hms.AutomatedWork.AutomatedWorkFlame;
 /**
  *
  * @author SAMSUNG
@@ -301,10 +303,16 @@ public class Management extends javax.swing.JFrame {
 
     private void hotelManagementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hotelManagementActionPerformed
         // TODO add your handling code here:
+        HotelManagement hm = new HotelManagement();
+        hm.setVisible(true);
+        hm.setLocationRelativeTo(null);
     }//GEN-LAST:event_hotelManagementActionPerformed
 
     private void monayandeveryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_monayandeveryActionPerformed
         // TODO add your handling code here:
+        AutomatedWorkFlame awf = new AutomatedWorkFlame();
+        awf.setVisible(true);
+        awf.setLocationRelativeTo(null);
     }//GEN-LAST:event_monayandeveryActionPerformed
 
     private void restaurantButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restaurantButtonActionPerformed
