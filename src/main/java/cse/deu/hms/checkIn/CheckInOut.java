@@ -3,8 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package cse.deu.hms.checkIn;
-// 내일 할거 체크인 버튼을 누르면 체크인으로 바뀌긴하지만 txt파일에는 저장도 되지않고 기록
-// 또한 되지 않는다 그렇기 때문에 내일 이걸 진행하고 더 진행.
 
 import cse.deu.hms.reservation.*;
 import java.io.*;
@@ -68,6 +66,11 @@ public class CheckInOut extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         jTable4 = new javax.swing.JTable();
         feedback_save = new javax.swing.JButton();
+        usedetail = new javax.swing.JDialog();
+        jLabel8 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
         backButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         checkInButton = new javax.swing.JButton();
@@ -145,13 +148,7 @@ public class CheckInOut extends javax.swing.JFrame {
 
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+
             },
             new String [] {
                 "고유번호", "객실 번호", "예약자", "전화번호", "금액", "결제 유형"
@@ -330,6 +327,65 @@ public class CheckInOut extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jLabel8.setFont(new java.awt.Font("맑은 고딕", 1, 24)); // NOI18N
+        jLabel8.setText("사용 내역");
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "객실 번호", "메뉴", "개수", "예약시간", "식당 / 룸서비스"
+            }
+        ));
+        jScrollPane2.setViewportView(jTable2);
+
+        jButton1.setText("확인");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout usedetailLayout = new javax.swing.GroupLayout(usedetail.getContentPane());
+        usedetail.getContentPane().setLayout(usedetailLayout);
+        usedetailLayout.setHorizontalGroup(
+            usedetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, usedetailLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(usedetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(usedetailLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, usedetailLayout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        usedetailLayout.setVerticalGroup(
+            usedetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(usedetailLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         backButton.setText("뒤로가기");
@@ -401,7 +457,7 @@ public class CheckInOut extends javax.swing.JFrame {
 
     private void checkInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkInButtonActionPerformed
         // TODO add your handling code here:
-        checkin.setSize(1000, 600); // 너비 1000, 높이 300으로 설정
+        checkin.setSize(1000, 600); // 너비 1000, 높이 600으로 설정
         checkin.setResizable(false); // 크기 변경 불가능하도록 설정 (선택 사항)
         checkin.setLocationRelativeTo(this);// 다이얼로그를 화면 중앙에 위치
         checkin.setVisible(true);// 다이얼로그 표시
@@ -514,7 +570,58 @@ public class CheckInOut extends javax.swing.JFrame {
 
     private void useHistoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useHistoryActionPerformed
         // TODO add your handling code here:
+        usedetail.setSize(710, 380); // 너비 710, 높이 380으로 설정
+        usedetail.setResizable(false); // 크기 변경 불가능하도록 설정 (선택 사항)
+        usedetail.setLocationRelativeTo(this);// 다이얼로그를 화면 중앙에 위치
+        usedetail.setVisible(true);// 다이얼로그 표시
+
+        int selectedRow = jTable4.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "사용 내역을 확인할 행을 선택해주세요.");
+            return;
+        }
+
+        // 선택된 행에서 객실 번호 가져오기
+        DefaultTableModel model = (DefaultTableModel) jTable4.getModel();
+        String roomNumber = (String) model.getValueAt(selectedRow, 1); // 객실 번호
+
+        // 사용 내역 테이블(jTable2) 초기화
+        DefaultTableModel detailTableModel = (DefaultTableModel) jTable2.getModel();
+        detailTableModel.setRowCount(0); // 기존 데이터 제거
+
+        // menu_reservation.txt 파일에서 데이터 읽기
+        File usageFile = new File(paths + "/src/menu_payment.txt");
+
+        if (usageFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(usageFile))) {
+                String line;
+                boolean hasData = false; // 사용 내역 데이터가 있는지 확인
+                while ((line = reader.readLine()) != null) {
+                    String[] data = line.split("\t");
+                    if (data.length >= 6 && data[0].trim().equals(roomNumber.trim())) { // 객실 번호 비교
+                        // 데이터 구성
+                        String menu = data[1]; // 메뉴 이름
+                        int quantity = Integer.parseInt(data[3]); // 개수
+                        String reservationTime = data[4]; // 예약 시간
+                        String serviceType = data[5]; // 식당/룸서비스 구분
+
+                        // 테이블에 데이터 추가
+                        detailTableModel.addRow(new Object[]{roomNumber, menu, quantity, reservationTime, serviceType});
+                        hasData = true; // 데이터가 있음을 표시
+                    }
+                }
+                if (!hasData) { // 데이터가 없는 경우 경고 메시지 출력
+                    JOptionPane.showMessageDialog(this, "해당 객실 번호의 사용 내역이 없습니다.");
+                    usedetail.dispose();
+                }
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "파일 읽기 오류: " + e.getMessage());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "menu_reservation.txt 파일이 존재하지 않습니다.");
+        }
     }//GEN-LAST:event_useHistoryActionPerformed
+
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
@@ -594,6 +701,7 @@ public class CheckInOut extends javax.swing.JFrame {
             selectedData[7] // 결제 유형 (마지막 열)
         };
 
+        // 빈 줄 없이 첫 번째 행부터 데이터를 추가하기 위해 모델 초기화 방지
         checkinModel.addRow(checkinData); // 체크인 리스트 테이블에 추가
 
         // 예약 리스트에서 선택된 행 제거
@@ -721,7 +829,73 @@ public class CheckInOut extends javax.swing.JFrame {
 
     private void feedback_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_feedback_saveActionPerformed
         // TODO add your handling code here:
+        int selectedRow = jTable4.getSelectedRow(); // jTable5는 체크인 리스트 테이블
+
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "행을 선택해주세요.");
+            return;
+        }
+
+        // 선택된 행의 데이터를 가져오기
+        DefaultTableModel model = (DefaultTableModel) jTable4.getModel();
+        String roomNumber = (String) model.getValueAt(selectedRow, 1); // 객실 번호
+
+        // 피드백 입력 텍스트 가져오기
+        String feedback = jTextField2.getText().trim(); // jTextArea1은 피드백 입력창
+
+        if (feedback.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "피드백을 입력해주세요.");
+            return;
+        }
+
+        // 피드백 데이터를 저장할 형식 지정
+        String feedbackData = String.format("%s\t%s\n", roomNumber, feedback);
+
+        // 피드백 파일 경로 지정
+        String feedbackFilePath = paths + "/src/feedback.txt";
+
+        // 파일에 저장
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(feedbackFilePath, true))) {
+            writer.write(feedbackData);
+            JOptionPane.showMessageDialog(this, "피드백이 저장되었습니다.");
+
+            // 피드백 입력창 초기화
+            jTextField2.setText("");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "파일 저장 중 오류가 발생했습니다: " + e.getMessage());
+        }
     }//GEN-LAST:event_feedback_saveActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        usedetail.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private int getRoomPrice(String roomNumber) {
+        // roomNumber에서 층 정보 추출 (예: "101" → "1층")
+        if (roomNumber == null || roomNumber.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "객실 번호가 유효하지 않습니다.");
+            return 100000; // 기본값
+        }
+
+        String floor = roomNumber.substring(0, 1) + "층";
+        String roomPriceFilePath = paths + "/src/roomPrice.txt";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(roomPriceFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split("\t");
+                if (data.length == 2 && data[0].equals(floor)) {
+                    return Integer.parseInt(data[1]); // 해당 층의 요금 반환
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "roomPrice.txt 파일을 읽는 중 오류가 발생했습니다: " + e.getMessage());
+        }
+
+        JOptionPane.showMessageDialog(this, "해당 층의 요금 정보를 찾을 수 없습니다. 기본값을 사용합니다.");
+        return 100000; // 기본 요금 반환
+    }
 
     /**
      * @param args the command line arguments
@@ -774,6 +948,7 @@ public class CheckInOut extends javax.swing.JFrame {
     private javax.swing.JDialog checkout;
     private javax.swing.JButton checkout_searchButton;
     private javax.swing.JButton feedback_save;
+    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
@@ -783,10 +958,13 @@ public class CheckInOut extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
     private javax.swing.JTextField jTextField1;
@@ -794,5 +972,6 @@ public class CheckInOut extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField3;
     private javax.swing.JButton searchButton;
     private javax.swing.JButton useHistory;
+    private javax.swing.JDialog usedetail;
     // End of variables declaration//GEN-END:variables
 }

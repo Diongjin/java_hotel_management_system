@@ -998,6 +998,7 @@ public class RoomService extends javax.swing.JFrame {
             return;
         }
 
+        // 총 금액 확인
         String totalAmountStr = jTextField4.getText().trim();
         int totalAmount;
         try {
@@ -1007,45 +1008,103 @@ public class RoomService extends javax.swing.JFrame {
             return;
         }
 
-        String filePath = paths + "/src/checkIn_list.txt";
-        StringBuilder updatedContent = new StringBuilder();
-        boolean roomFound = false;
+        // 결제 카테고리 확인
+        String paymentCategory = (String) jComboBox3.getSelectedItem();
+        if (paymentCategory == null || paymentCategory.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "결제 카테고리를 선택하세요.");
+            return;
+        }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        // 현재 시간 가져오기
+        String currentTime = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+
+        // menu_payment.txt 파일에 데이터 저장
+        String paymentFilePath = paths + "/src/menu_payment.txt";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(paymentFilePath, true))) {
+            DefaultTableModel paymentModel = (DefaultTableModel) jTable4.getModel(); // 결제 창 테이블 데이터 가져오기
+
+            for (int i = 0; i < paymentModel.getRowCount(); i++) {
+                String menu = (String) paymentModel.getValueAt(i, 0); // 메뉴 이름
+                int price = (int) paymentModel.getValueAt(i, 1);      // 단가
+                int quantity = (int) paymentModel.getValueAt(i, 2);  // 수량
+                int totalPrice = price * quantity;                   // 품목 총 금액
+
+                // 메뉴의 식당/룸서비스 정보를 가져오기
+                String serviceType = getMenuType(menu);
+
+                // 파일에 저장할 데이터 작성
+                String paymentData = String.format(
+                        "%s\t%s\t%d\t%d\t%s\t%s\t%s\n",
+                        roomNumber, // 객실 번호
+                        menu, // 메뉴 이름
+                        totalPrice, // 품목 총 금액
+                        quantity, // 수량
+                        currentTime, // 결제 시간
+                        serviceType, // 식당/룸서비스
+                        paymentCategory // 결제 카테고리
+                );
+
+                // 파일에 데이터 저장
+                writer.write(paymentData);
+            }
+
+            // 결제 유형에 따른 처리
+            if ("객실청구".equals(paymentCategory)) {
+                // 기존 객실 금액에 결제 금액 추가
+                updateRoomTotal(roomNumber, totalAmount);
+
+                JOptionPane.showMessageDialog(this, "객실 청구 완료");
+            } else {
+                JOptionPane.showMessageDialog(this, "결제 완료");
+            }
+
+            // 결제 창 닫기 및 필드 초기화
+            payMent.dispose();
+            resetFieldsAndTables();
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "결제 데이터를 저장하는 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }//GEN-LAST:event_pay_to_payActionPerformed
+
+    private void updateRoomTotal(String roomNumber, int additionalAmount) {
+        String checkInFilePath = paths + "/src/checkIn_list.txt";
+        List<String> updatedLines = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(checkInFilePath))) {
             String line;
+
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split("\t");
 
                 if (data.length >= 6 && data[1].equals(roomNumber)) {
+                    // 기존 객실 금액에 추가 금액 더하기
                     int currentAmount = Integer.parseInt(data[4]);
-                    currentAmount += totalAmount;
-                    data[4] = String.valueOf(currentAmount);
-                    roomFound = true;
-                }
+                    int newAmount = currentAmount + additionalAmount;
+                    data[4] = String.valueOf(newAmount); // 금액 업데이트
 
-                updatedContent.append(String.join("\t", data)).append("\n");
+                    // 업데이트된 데이터를 다시 하나의 문자열로 결합
+                    updatedLines.add(String.join("\t", data));
+                } else {
+                    updatedLines.add(line); // 다른 객실 데이터는 그대로 추가
+                }
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 읽기 중 오류가 발생했습니다: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "객실 금액 업데이트 중 오류가 발생했습니다: " + e.getMessage());
             return;
         }
 
-        if (roomFound) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-                writer.write(updatedContent.toString());
-                JOptionPane.showMessageDialog(this, "결제가 완료되었습니다.");
-                payMent.dispose();
-
-                // 초기화 코드 추가
-                resetFieldsAndTables();
-
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "파일 쓰기 중 오류가 발생했습니다: " + e.getMessage());
+        // 변경된 내용을 다시 파일에 저장
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(checkInFilePath))) {
+            for (String updatedLine : updatedLines) {
+                writer.write(updatedLine);
+                writer.newLine();
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "해당 객실 번호를 찾을 수 없습니다.");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "객실 금액 저장 중 오류가 발생했습니다: " + e.getMessage());
         }
-    }//GEN-LAST:event_pay_to_payActionPerformed
+    }
 
     private void resetFieldsAndTables() {
         // 객실 번호 초기화
