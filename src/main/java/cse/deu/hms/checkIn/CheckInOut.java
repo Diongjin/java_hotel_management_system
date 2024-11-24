@@ -71,6 +71,17 @@ public class CheckInOut extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        checkout_OK = new javax.swing.JDialog();
+        jLabel9 = new javax.swing.JLabel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTable5 = new javax.swing.JTable();
+        jLabel10 = new javax.swing.JLabel();
+        jTextField4 = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jTextField6 = new javax.swing.JTextField();
         backButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         checkInButton = new javax.swing.JButton();
@@ -386,6 +397,93 @@ public class CheckInOut extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jLabel9.setFont(new java.awt.Font("맑은 고딕", 1, 18)); // NOI18N
+        jLabel9.setText("체크아웃 확인");
+
+        jTable5.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "객실 번호", "메뉴", "수량", "객실 청구 / 예약"
+            }
+        ));
+        jScrollPane5.setViewportView(jTable5);
+
+        jLabel10.setFont(new java.awt.Font("맑은 고딕", 0, 14)); // NOI18N
+        jLabel10.setText("총 금액");
+
+        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField4ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("체크아웃");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel11.setText("객실 요금");
+
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel12.setText("사용 금액");
+
+        javax.swing.GroupLayout checkout_OKLayout = new javax.swing.GroupLayout(checkout_OK.getContentPane());
+        checkout_OK.getContentPane().setLayout(checkout_OKLayout);
+        checkout_OKLayout.setHorizontalGroup(
+            checkout_OKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(checkout_OKLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(checkout_OKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(checkout_OKLayout.createSequentialGroup()
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                    .addGroup(checkout_OKLayout.createSequentialGroup()
+                        .addGroup(checkout_OKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, checkout_OKLayout.createSequentialGroup()
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        checkout_OKLayout.setVerticalGroup(
+            checkout_OKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(checkout_OKLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(7, 7, 7)
+                .addGroup(checkout_OKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField5)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(checkout_OKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                    .addComponent(jTextField4)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         backButton.setText("뒤로가기");
@@ -495,7 +593,7 @@ public class CheckInOut extends javax.swing.JFrame {
 
     private void checkOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkOutButtonActionPerformed
         // 기본 프레임에서 체크인과 체크아웃 버튼중에 체크인을 눌렀을 때 나오는 프레임
-        checkout.setSize(710, 470); // 너비 1000, 높이 600으로 설정
+        checkout.setSize(710, 490); // 너비 1000, 높이 600으로 설정
         checkout.setResizable(false); // 크기 변경 불가능하도록 설정 (선택 사항)
         checkout.setLocationRelativeTo(this);// 다이얼로그를 화면 중앙에 위치
         initializeCheckoutTable();
@@ -515,62 +613,77 @@ public class CheckInOut extends javax.swing.JFrame {
 
     private void CO_checkOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CO_checkOutButtonActionPerformed
         // TODO add your handling code here:
-        int selectedRow = jTable4.getSelectedRow(); // 체크인 리스트에서 선택된 행 가져오기
+        int selectedRow = jTable4.getSelectedRow();
 
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "체크아웃할 데이터를 선택하십시오.");
-            return; // 선택된 행이 없으면 경고 메시지 출력
+            JOptionPane.showMessageDialog(this, "체크아웃할 객실을 선택하세요.");
+            return;
         }
 
-        DefaultTableModel checkinModel = (DefaultTableModel) jTable4.getModel();
+        // 객실 번호 가져오기
+        String roomNumber = (String) jTable4.getValueAt(selectedRow, 1);
 
-        // 선택된 행의 데이터 가져오기
-        String[] checkoutData = new String[checkinModel.getColumnCount()];
-        for (int i = 0; i < checkinModel.getColumnCount(); i++) {
-            checkoutData[i] = (String) checkinModel.getValueAt(selectedRow, i);
-        }
+        // 테이블 초기화
+        DefaultTableModel tableModel = (DefaultTableModel) jTable5.getModel();
+        tableModel.setRowCount(0);
 
-        // 체크인 리스트에서 데이터 제거
-        checkinModel.removeRow(selectedRow);
+        int roomCharge = 0; // 객실 요금
+        int usageCharge = 0; // 사용 금액
 
-        // 파일 업데이트
-        try {
-            // 1. checkIn_list.txt에서 체크아웃한 데이터 삭제
-            File checkInFile = new File(paths + "/src/checkIn_list.txt");
-            List<String> remainingCheckins = new ArrayList<>();
-            try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (!line.split("\t")[0].equals(checkoutData[0])) { // 고유번호 비교
-                        remainingCheckins.add(line);
-                    }
+        // 객실 청구 내역 로드 (파일에서만 읽기, 삭제는 하지 않음)
+        File checkInFile = new File(paths + "/src/checkIn_list.txt");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split("\t");
+                if (data.length >= 6 && data[1].equals(roomNumber)) {
+                    roomCharge = Integer.parseInt(data[4]); // 금액 가져오기
+                    tableModel.addRow(new Object[]{roomNumber, "객실 요금", 1, "객실 청구"});
                 }
             }
-
-            // checkIn_list.txt 업데이트
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(checkInFile))) {
-                for (String checkin : remainingCheckins) {
-                    writer.write(checkin);
-                    writer.newLine();
-                }
-            }
-
-            // 2. checkOut_list.txt에 체크아웃 데이터 추가
-            File checkOutFile = new File(paths + "/src/checkOut_list.txt");
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(checkOutFile, true))) { // true로 설정해서 덧붙이기
-                writer.write(String.join("\t", checkoutData)); // 체크아웃 데이터 저장
-                writer.newLine();
-            }
-
-            JOptionPane.showMessageDialog(this, "체크아웃 완료.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 업데이트 중 오류가 발생했습니다: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "객실 청구 데이터를 로드하는 중 오류 발생: " + e.getMessage());
         }
+
+        // 예약 내역 로드
+        File menuFile = new File(paths + "/src/menu_payment.txt");
+        try (BufferedReader reader = new BufferedReader(new FileReader(menuFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split("\t");
+                if (data.length >= 6 && data[0].equals(roomNumber)) {
+                    String menu = data[1];
+                    int quantity = Integer.parseInt(data[3]);
+                    int price = Integer.parseInt(data[2]);
+                    usageCharge += price;
+
+                    tableModel.addRow(new Object[]{roomNumber, menu, quantity, "예약"});
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "예약 데이터를 로드하는 중 오류 발생: " + e.getMessage());
+        }
+
+        // 총 금액 계산
+        int totalAmount = roomCharge + usageCharge;
+
+        // UI 업데이트
+        jTextField5.setText(String.valueOf(roomCharge)); // 객실 요금
+        jTextField6.setText(String.valueOf(usageCharge)); // 사용 금액
+        jTextField4.setText(String.valueOf(totalAmount)); // 총 금액
+
+        // 체크아웃 확인 프레임 표시
+        checkout_OK.setSize(460, 350);
+        checkout_OK.setResizable(false);
+        checkout_OK.setLocationRelativeTo(this);
+        checkout_OK.setVisible(true);
     }//GEN-LAST:event_CO_checkOutButtonActionPerformed
+
 
     private void useHistoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useHistoryActionPerformed
         // TODO add your handling code here:
-        usedetail.setSize(710, 380); // 너비 710, 높이 380으로 설정
+        usedetail.setSize(710, 400); // 너비 710, 높이 380으로 설정
         usedetail.setResizable(false); // 크기 변경 불가능하도록 설정 (선택 사항)
         usedetail.setLocationRelativeTo(this);// 다이얼로그를 화면 중앙에 위치
         usedetail.setVisible(true);// 다이얼로그 표시
@@ -871,6 +984,60 @@ public class CheckInOut extends javax.swing.JFrame {
         usedetail.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = jTable4.getSelectedRow(); // 체크인 리스트 테이블에서 선택된 행 가져오기
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "체크아웃할 객실을 선택하세요.");
+            return;
+        }
+
+        // 선택된 객실 번호 가져오기
+        DefaultTableModel checkinModel = (DefaultTableModel) jTable4.getModel();
+        String roomNumber = (String) checkinModel.getValueAt(selectedRow, 1); // 객실 번호
+
+        // 체크아웃 완료 메시지
+        String totalAmount = jTextField4.getText();
+        JOptionPane.showMessageDialog(this, "총 금액: " + totalAmount + "원\n체크아웃이 완료되었습니다.");
+
+        // 1. checkIn_list.txt에서 선택된 객실 삭제
+        File checkInFile = new File(paths + "/src/checkIn_list.txt");
+        List<String> updatedCheckInList = new ArrayList<>(); // 체크인 리스트를 업데이트할 데이터
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split("\t");
+                if (!data[1].equals(roomNumber)) { // 선택된 객실 번호가 아니면 유지
+                    updatedCheckInList.add(line);
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "체크인 데이터를 업데이트하는 중 오류 발생: " + e.getMessage());
+            return;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(checkInFile))) {
+            for (String updatedLine : updatedCheckInList) {
+                writer.write(updatedLine);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "체크인 데이터를 저장하는 중 오류 발생: " + e.getMessage());
+            return;
+        }
+
+        // 2. UI에서 체크인 리스트 테이블 업데이트
+        checkinModel.removeRow(selectedRow); // 선택된 행 제거
+
+        // 3. 체크아웃 다이얼로그 닫기
+        checkout_OK.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField4ActionPerformed
+
     private int getRoomPrice(String roomNumber) {
         // roomNumber에서 층 정보 추출 (예: "101" → "1층")
         if (roomNumber == null || roomNumber.isEmpty()) {
@@ -946,12 +1113,17 @@ public class CheckInOut extends javax.swing.JFrame {
     private javax.swing.JDialog checkin;
     private javax.swing.JButton checkinButton;
     private javax.swing.JDialog checkout;
+    private javax.swing.JDialog checkout_OK;
     private javax.swing.JButton checkout_searchButton;
     private javax.swing.JButton feedback_save;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -959,17 +1131,23 @@ public class CheckInOut extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
+    private javax.swing.JTable jTable5;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextField6;
     private javax.swing.JButton searchButton;
     private javax.swing.JButton useHistory;
     private javax.swing.JDialog usedetail;

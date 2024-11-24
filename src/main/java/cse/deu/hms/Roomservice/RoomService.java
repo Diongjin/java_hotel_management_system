@@ -21,6 +21,7 @@ public class RoomService extends javax.swing.JFrame {
     private File reservationFile = new File(paths + "/src/reservation.txt"); // src폴더에 파일이 있음
     private DefaultTableModel menuTableModel;
     private DefaultTableModel purchaseTableModel;
+    private final FileManager fileManager;
 
     /**
      * Creates new form RoomService
@@ -28,6 +29,7 @@ public class RoomService extends javax.swing.JFrame {
     public RoomService() {
         initComponents();
         initializeTableModels();
+        fileManager = new FileManager();
         loadMenuData();
     }
 
@@ -40,19 +42,14 @@ public class RoomService extends javax.swing.JFrame {
     }
 
     private void loadMenuData() {
-        String filePath = paths + "/src/menu_list.txt"; // 파일 경로 설정 (프로젝트 루트에 파일 존재)
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] menuData = line.split("\t");
-                if (menuData.length == 3 && "룸서비스".equals(menuData[2])) {
-                    String menu = menuData[0]; // 메뉴 이름
-                    int price = Integer.parseInt(menuData[1]); // 가격
-                    menuTableModel.addRow(new Object[]{menu, price}); // 식당 메뉴만 추가
-                }
+        List<String[]> menuDataList = fileManager.readFile("menu_list.txt"); // FileManager로 파일 읽기
+
+        for (String[] menuData : menuDataList) {
+            if (menuData.length == 3 && "룸서비스".equals(menuData[2])) {
+                String menu = menuData[0]; // 메뉴 이름
+                int price = Integer.parseInt(menuData[1]); // 가격
+                menuTableModel.addRow(new Object[]{menu, price}); // 메뉴 데이터 추가
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -832,27 +829,24 @@ public class RoomService extends javax.swing.JFrame {
         menuReservationCheck.setLocationRelativeTo(this);
         menuReservationCheck.setVisible(true);
 
-        String reservationFilePath = paths + "/src/menu_reservation.txt";
-
         // 예약 확인 테이블 초기화
         DefaultTableModel reservationModel = (DefaultTableModel) jTable7.getModel();
         reservationModel.setRowCount(0); // 기존 데이터 삭제
 
         // 예약 데이터를 저장할 리스트 생성
-        List<String[]> reservationDataList = new ArrayList<>();
+        List<String[]> reservationDataList = fileManager.readFile("menu_reservation.txt");
 
         // 예약 파일 읽기
-        try (BufferedReader reader = new BufferedReader(new FileReader(reservationFilePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t");
-                if (data.length == 6) { // 데이터 형식이 유효한 경우
-                    reservationDataList.add(data); // 리스트에 데이터 추가
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "예약 파일을 불러오는 중 오류가 발생했습니다: " + e.getMessage());
+        if (reservationDataList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "예약 데이터가 없습니다.");
             return;
+        }
+
+// 리스트를 역순으로 순회하여 테이블에 추가
+        for (int i = reservationDataList.size() - 1; i >= 0; i--) {
+            String[] data = reservationDataList.get(i);
+            reservationModel.addRow(new Object[]{data[0], data[1], Integer.parseInt(data[2]),
+                Integer.parseInt(data[3]), data[4], data[5]});
         }
 
         // 리스트를 역순으로 순회하여 테이블에 추가

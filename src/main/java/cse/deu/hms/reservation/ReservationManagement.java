@@ -40,7 +40,7 @@ public class ReservationManagement extends javax.swing.JFrame {
     private JDateChooser checkInDateChooser;
     private JDateChooser checkOutDateChooser;
     private ArrayList<String[]> reservationList;  // 예약 정보를 담을 리스트
-    
+
     public ReservationManagement() {
         initComponents();
         additionalInit();
@@ -1476,6 +1476,60 @@ public class ReservationManagement extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_checkindate2ActionPerformed
+
+    private void checkInReservation(String uniqueId, String roomNumber) {
+        // 예약 리스트에서 해당 고유번호와 객실번호를 확인 및 삭제
+        boolean isFound = false;
+        for (int i = 0; i < reservationList.size(); i++) {
+            String[] reservation = reservationList.get(i);
+            if (reservation[0].equals(uniqueId) && reservation[1].equals(roomNumber)) {
+                isFound = true;
+
+                // 체크인 리스트에 추가
+                saveCheckInData(reservation);
+
+                // 예약 리스트에서 제거
+                reservationList.remove(i);
+
+                // 파일 업데이트
+                saveReservations();
+                showClientInfo();
+
+                JOptionPane.showMessageDialog(this, "체크인이 완료되었습니다.");
+                break;
+            }
+        }
+
+        if (!isFound) {
+            JOptionPane.showMessageDialog(this, "해당 예약을 찾을 수 없거나 이미 체크인된 상태입니다.");
+        }
+    }
+
+    private void saveCheckInData(String[] checkInData) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(paths + "/src/checkInList.txt", true))) {
+            String data = String.join("\t", checkInData);
+            writer.write(data);
+            writer.newLine(); // 줄 바꿈
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "체크인 데이터를 저장하는 중 오류가 발생했습니다.");
+        }
+    }
+
+    private boolean isDuplicateInCheckInList(String uniqueId, String roomNumber) {
+        File checkInFile = new File(paths + "/src/checkInList.txt");
+        try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split("\t");
+                if (data[0].equals(uniqueId) && data[1].equals(roomNumber)) {
+                    return true; // 중복 발견
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "체크인 리스트를 읽는 중 오류가 발생했습니다.");
+        }
+        return false;
+    }
 
     private void checkoutdate2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkoutdate2ActionPerformed
         // TODO add your handling code here:
