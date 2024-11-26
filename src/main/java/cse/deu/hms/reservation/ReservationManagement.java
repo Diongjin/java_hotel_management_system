@@ -1285,14 +1285,34 @@ public class ReservationManagement extends javax.swing.JFrame {
 
     }//GEN-LAST:event_checkoutdateActionPerformed
 
-    private boolean isRoomNumberDuplicate(String roomNumber, String excludedId) {
+    private boolean isRoomNumberDuplicateInAllLists(String roomNumber) {
+        // 1. 예약 리스트에서 중복 확인
         for (String[] reservation : reservationList) {
-            // 예약 번호(ID)가 제외 대상이 아니고, 객실 번호가 중복될 때만 true 반환
-            if (!reservation[0].equals(excludedId) && reservation[1].equals(roomNumber)) {
-                return true;
+            if (reservation[1].equals(roomNumber)) { // 객실 번호 중복 확인
+                return true; // 예약 리스트에서 중복 발견
             }
         }
-        return false; // 중복이 없는 경우 false 반환
+
+        // 2. 체크인 리스트에서 중복 확인
+        File checkInFile = new File(paths + "/src/checkIn_list.txt"); // 체크인 리스트 파일 경로
+        if (!checkInFile.exists()) {
+            JOptionPane.showMessageDialog(this, "체크인 리스트 파일이 존재하지 않습니다. 경로를 확인하세요.");
+            return false; // 파일이 없으므로 중복 처리 중단
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split("\t");
+                if (data.length > 1 && data[1].equals(roomNumber)) { // 객실 번호 중복 확인
+                    return true; // 체크인 리스트에서 중복 발견
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "체크인 리스트를 읽는 중 오류가 발생했습니다: " + e.getMessage());
+        }
+
+        return false; // 중복이 없는 경우
     }
 
     private void realAddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_realAddButtonActionPerformed
@@ -1316,8 +1336,9 @@ public class ReservationManagement extends javax.swing.JFrame {
             return;
         }
 
-        if (isRoomNumberDuplicate(roomNumber, null)) {
-            JOptionPane.showMessageDialog(this, "이미 예약된 객실 번호입니다. 다른 객실 번호를 입력하세요.");
+        // 객실 번호 중복 확인 (예약 리스트와 체크인 리스트 모두 확인)
+        if (isRoomNumberDuplicateInAllLists(roomNumber)) {
+            JOptionPane.showMessageDialog(this, "이미 예약되었거나 체크인된 객실 번호입니다. 다른 객실 번호를 입력하세요.");
             return;
         }
 
@@ -1367,30 +1388,55 @@ public class ReservationManagement extends javax.swing.JFrame {
 
     private String generateUniqueId() {
         ArrayList<Integer> existingIds = new ArrayList<>();
+
+        // 예약 리스트에서 고유번호 수집
         for (String[] reservation : reservationList) {
             try {
                 int currentId = Integer.parseInt(reservation[0]); // 고유번호는 배열의 첫 번째 요소
-                existingIds.add(currentId);
+                existingIds.add(currentId); // 예약 리스트의 고유번호 추가
             } catch (NumberFormatException e) {
-                // 고유번호가 숫자가 아닌 경우 무시
-                JOptionPane.showMessageDialog(this, "예약 데이터에 잘못된 고유번호가 포함되어 있습니다.");
             }
         }
 
-        // 고유번호 리스트를 정렬
+        // 체크인 리스트에서 고유번호 수집
+        File checkInFile = new File(paths + "/src/checkIn_list.txt");
+        if (checkInFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] data = line.split("\t");
+                    if (data.length > 0) {
+                        try {
+                            int currentId = Integer.parseInt(data[0]); // 체크인 리스트의 고유번호
+                            existingIds.add(currentId); // 리스트에 추가
+                        } catch (NumberFormatException e) {
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "체크인 리스트를 읽는 중 오류가 발생했습니다: " + e.getMessage());
+            }
+        }
+
+        // 고유번호 리스트를 오름차순으로 정렬
         existingIds.sort(Integer::compareTo);
 
-        // 누락된 번호 찾기
-        int missingId = 1; // 고유번호는 1부터 시작
+        // 고유번호가 비어있거나 첫 번째 번호가 1이 아닌 경우 처리
+        if (existingIds.isEmpty() || existingIds.get(0) != 1) {
+            return "1"; // 첫 고유번호는 1
+        }
+
+        // 누락된 고유번호를 찾음
+        int nextId = 1;
         for (int id : existingIds) {
-            if (id == missingId) {
-                missingId++; // 이미 존재하는 번호면 증가
+            if (id == nextId) {
+                nextId++; // 이미 사용 중인 번호면 증가
             } else {
-                break; // 존재하지 않는 번호를 찾으면 종료
+                break; // 누락된 번호를 찾으면 종료
             }
         }
 
-        return String.valueOf(missingId); // 누락된 번호 반환
+        return String.valueOf(nextId); // 사용 가능한 고유번호 반환
     }
 
 
@@ -1411,7 +1457,7 @@ public class ReservationManagement extends javax.swing.JFrame {
 
         String uniqueId = reservationList.get(selectedRow)[0]; // 수정 중인 예약의 고유 번호
 
-        if (isRoomNumberDuplicate(roomNumber, uniqueId)) {
+        if (isRoomNumberDuplicateInAllLists(roomNumber)) {
             JOptionPane.showMessageDialog(this, "이미 예약된 객실 번호입니다. 다른 객실 번호를 입력하세요.");
             return;
         }
@@ -1506,7 +1552,7 @@ public class ReservationManagement extends javax.swing.JFrame {
     }
 
     private void saveCheckInData(String[] checkInData) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(paths + "/src/checkInList.txt", true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(paths + "/src/checkIn_list.txt", true))) {
             String data = String.join("\t", checkInData);
             writer.write(data);
             writer.newLine(); // 줄 바꿈
@@ -1516,7 +1562,7 @@ public class ReservationManagement extends javax.swing.JFrame {
     }
 
     private boolean isDuplicateInCheckInList(String uniqueId, String roomNumber) {
-        File checkInFile = new File(paths + "/src/checkInList.txt");
+        File checkInFile = new File(paths + "/src/checkIn_list.txt");
         try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
             String line;
             while ((line = reader.readLine()) != null) {

@@ -30,7 +30,7 @@ public class FileManager {
                 data.add(line.split("\t"));
             }
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            System.err.println("파일을 불러올 수 없습니다.: " + e.getMessage());
         }
         return data;
     }
@@ -44,7 +44,7 @@ public class FileManager {
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.err.println("Error writing file: " + e.getMessage());
+            System.err.println("파일을 불러올 수 없습니다.: " + e.getMessage());
         }
     }
 

@@ -598,6 +598,8 @@ public class RoomService extends javax.swing.JFrame {
                 {null, null, null},
                 {null, null, null},
                 {null, null, null},
+                {null, null, null},
+                {null, null, null},
                 {null, null, null}
             },
             new String [] {
@@ -877,7 +879,7 @@ public class RoomService extends javax.swing.JFrame {
 
     private void roomCheckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roomCheckButtonActionPerformed
         // TODO add your handling code here:
-        roomCheck.setSize(800, 400);
+        roomCheck.setSize(800, 430);
         roomCheck.setResizable(false);
         roomCheck.setLocationRelativeTo(this);
         roomCheck.setVisible(true);
