@@ -21,6 +21,7 @@ public class FileManager {
         File file = new File(paths + "/src/" + fileName);
 
         if (!file.exists()) {
+            System.err.println(fileName + " 파일이 존재하지 않습니다.");
             return data;
         }
 
@@ -30,7 +31,7 @@ public class FileManager {
                 data.add(line.split("\t"));
             }
         } catch (IOException e) {
-            System.err.println("파일을 불러올 수 없습니다.: " + e.getMessage());
+            System.err.println("파일을 읽는 중 오류 발생: " + e.getMessage());
         }
         return data;
     }
@@ -44,7 +45,7 @@ public class FileManager {
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.err.println("파일을 불러올 수 없습니다.: " + e.getMessage());
+            System.err.println("파일을 쓰는 중 오류 발생: " + e.getMessage());
         }
     }
 

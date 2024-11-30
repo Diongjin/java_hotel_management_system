@@ -21,15 +21,8 @@ import javax.swing.table.DefaultTableModel;
  */
 public class AutomatedWorkFlame extends javax.swing.JFrame {
 
-    private final String paths = System.getProperty("user.dir");  // 프로젝트 루트 경로
-    private final File checkinFile = new File(paths + "/src/checkIn_list.txt");
-    private final File checkoutFile = new File(paths + "/src/checkOut_list.txt");
-    private final File menuPaymentFile = new File(paths + "/src/menu_payment.txt");
-    private final File menuReservationFile = new File(paths + "/src/menu_reservation.txt");
-
-    /**
-     * Creates new form AutomatedWorkFlame
-     */
+    private final RevenueService revenueService = new RevenueService();
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -176,8 +169,6 @@ public class AutomatedWorkFlame extends javax.swing.JFrame {
 
     public AutomatedWorkFlame() {
         initComponents();
-
-        // 초기화 작업
         setTitle("수익 및 점유율 계산기"); // 창 제목 설정
         setLocationRelativeTo(null); // 화면 가운데에 창 표시
         setResizable(false); // 창 크기 조정 불가 설정
@@ -193,101 +184,20 @@ public class AutomatedWorkFlame extends javax.swing.JFrame {
         Date startDate = StartDateChooser.getDate();
         Date endDate = EndDateChooser.getDate();
 
-        // 날짜 유효성 검사
         if (startDate == null || endDate == null || startDate.after(endDate)) {
             JOptionPane.showMessageDialog(this, "유효한 날짜를 선택하세요.");
             return;
         }
 
-        // 체크인 및 체크아웃 인원 계산
-        int checkInCount = getCustomerCountWithinPeriod(checkinFile, startDate, endDate);
-        int checkOutCount = getCustomerCountWithinPeriod(checkoutFile, startDate, endDate);
+        RevenueResult result = revenueService.calculateRevenue(startDate, endDate);
 
-        // 객실 수익 계산
-        int roomRevenue = calculateRoomRevenue(checkinFile, startDate, endDate);
-
-        // 식당 수익 계산
-        int restaurantRevenue1 = calculateRestaurantRevenue(menuPaymentFile, startDate, endDate);
-        int restaurantRevenue2 = calculateRestaurantRevenue(menuReservationFile, startDate, endDate);
-        int totalRestaurantRevenue = restaurantRevenue1 + restaurantRevenue2;
-
-        // 총 수익 계산
-        int totalRevenue = roomRevenue + totalRestaurantRevenue;
-
-        // 결과를 텍스트 필드에 출력
-        jTextField1.setText(String.valueOf(checkInCount + checkOutCount)); // 점유율 출력 (총 인원 수)
-        jTextField2.setText(String.format("%,d 원", roomRevenue)); // 객실 수익 출력
-        jTextField3.setText(String.format("%,d 원", totalRestaurantRevenue)); // 식당 수익 출력
-        jTextField4.setText(String.format("%,d 원", totalRevenue)); // 총 수익 출력
+        jTextField1.setText(String.valueOf(result.getOccupancyRate()));
+        jTextField2.setText(String.format("%,d 원", result.getRoomRevenue()));
+        jTextField3.setText(String.format("%,d 원", result.getRestaurantRevenue()));
+        jTextField4.setText(String.format("%,d 원", result.getTotalRevenue()));
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private int calculateRoomRevenue(File file, Date startDate, Date endDate) {
-        int totalRevenue = 0;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t");
-                if (data.length > 4) { // 데이터가 충분한 열을 포함하는지 확인
-                    Date recordDate = dateFormat.parse(data[5]); // 체크인 날짜
-                    if (!recordDate.before(startDate) && !recordDate.after(endDate)) {
-                        totalRevenue += Integer.parseInt(data[4]); // 4번째 열: 금액
-                    }
-                }
-            }
-        } catch (IOException | java.text.ParseException e) {
-            JOptionPane.showMessageDialog(this, "파일 읽기 오류: " + e.getMessage());
-        }
-
-        return totalRevenue;
-    }
-
-    private int getCustomerCountWithinPeriod(File file, Date startDate, Date endDate) {
-        int count = 0;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t"); // 탭으로 구분된 데이터
-                if (data.length > 1) {
-                    Date recordDate = dateFormat.parse(data[5]); // 5열(체크인 날짜에)에 있다고 가정
-                    if (!recordDate.before(startDate) && !recordDate.after(endDate)) {
-                        count++;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 읽기 오류: " + file.getName() + "\n" + e.getMessage());
-        } catch (java.text.ParseException e) {
-            JOptionPane.showMessageDialog(this, "날짜 형식 오류: " + e.getMessage());
-        }
-
-        return count;
-    }
-
-    private int calculateRestaurantRevenue(File file, Date startDate, Date endDate) {
-        int totalRevenue = 0;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t"); // 데이터가 탭으로 구분된다고 가정
-                if (data.length > 2) { // 데이터가 충분한지 확인
-                    Date recordDate = dateFormat.parse(data[4]); // 두 번째 열: 날짜
-                    if (!recordDate.before(startDate) && !recordDate.after(endDate)) {
-                        totalRevenue += Integer.parseInt(data[2]); // 세 번째 열: 금액
-                    }
-                }
-            }
-        } catch (IOException | java.text.ParseException e) {
-            JOptionPane.showMessageDialog(this, "파일 읽기 오류: " + file.getName() + "\n" + e.getMessage());
-        }
-
-        return totalRevenue;
-    }
+    
 
     /**
      * @param args the command line arguments

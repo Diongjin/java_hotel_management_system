@@ -5,6 +5,7 @@
 package cse.deu.hms.totalManagement;
 
 import java.io.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -14,16 +15,19 @@ import javax.swing.table.DefaultTableModel;
  */
 public class HotelManagement extends javax.swing.JFrame {
 
-    private String paths = System.getProperty("user.dir");  // 프로젝트 루트 경로
-    private File roomPriceFile = new File(paths + "/src/roomPrice.txt"); // src폴더에 파일이 있음
-    private File menuFile = new File(paths + "/src/menu_list.txt");
-    private File userFile = new File(paths + "/src/user_list.txt");
+    private final RoomFile roomFile;
+    private final MenuFile menuFile;
+    private final AccountFile accountFile;
 
     /**
      * Creates new form HotelManagement
      */
     public HotelManagement() {
         initComponents();
+        String paths = System.getProperty("user.dir");
+        roomFile = new RoomFile(paths + "/src/roomPrice.txt");
+        menuFile = new MenuFile(paths + "/src/menu_list.txt");
+        accountFile = new AccountFile(paths + "/src/user_list.txt");
     }
 
     /**
@@ -760,26 +764,21 @@ public class HotelManagement extends javax.swing.JFrame {
         room.setResizable(false); // 크기 변경 불가능하도록 설정 (선택 사항)
         room.setLocationRelativeTo(this);// 다이얼로그를 화면 중앙에 위치
         room.setVisible(true);// 다이얼로그 표시
-
-        // room 테이블의 모델 가져오기
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0); // 기존 데이터 초기화
-
-        // roomPrice.txt 파일 읽기
-        try (BufferedReader br = new BufferedReader(new FileReader(roomPriceFile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                // 파일 내용이 "층수, 금액" 형식으로 저장되어 있다고 가정
-                String[] data = line.split("\t");
-                if (data.length == 2) {
-                    model.addRow(new Object[]{data[0].trim(), data[1].trim()}); // 테이블에 행 추가
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 읽기 실패: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
-        }
+        loadRoomData();
     }//GEN-LAST:event_roomButtonActionPerformed
 
+    private void loadRoomData() {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0); // 기존 데이터 초기화
+        try {
+            List<String[]> roomData = roomFile.readRoomData();
+            for (String[] row : roomData) {
+                model.addRow(row);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "객실 데이터 로드 실패");
+        }
+    }
     private void roomModifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roomModifyActionPerformed
         // TODO add your handling code here:
         int selectedRow = jTable1.getSelectedRow();
@@ -787,23 +786,30 @@ public class HotelManagement extends javax.swing.JFrame {
             String floor = (String) jTable1.getValueAt(selectedRow, 0); // 층수
             String currentPrice = (String) jTable1.getValueAt(selectedRow, 1); // 현재 금액
 
-            // 금액 수정 입력창 생성
             String newPrice = JOptionPane.showInputDialog(this,
                     "현재 금액: " + currentPrice + "\n금액을 수정하십시오:",
                     "금액 수정",
                     JOptionPane.PLAIN_MESSAGE);
 
-            // 새 금액이 입력되었을 경우 업데이트
             if (newPrice != null && !newPrice.trim().isEmpty()) {
-                // 테이블에서 금액 수정
                 DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
                 model.setValueAt(newPrice.trim(), selectedRow, 1);
 
-                // 파일에서도 금액 수정
-                updateFileAfterEdit(floor, newPrice.trim());
+                // 파일 수정
+                try {
+                    List<String[]> roomData = roomFile.readRoomData();
+                    for (String[] row : roomData) {
+                        if (row[0].equals(floor)) {
+                            row[1] = newPrice.trim();
+                        }
+                    }
+                    roomFile.writeRoomData(roomData);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "파일 업데이트 실패");
+                }
             }
         } else {
-            JOptionPane.showMessageDialog(this, "수정할 층을 선택하십시오.", "오류", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "수정할 행을 선택하세요.");
         }
     }//GEN-LAST:event_roomModifyActionPerformed
 
@@ -813,42 +819,23 @@ public class HotelManagement extends javax.swing.JFrame {
         menu.setResizable(false); // 크기 변경 불가능하도록 설정 (선택 사항)
         menu.setLocationRelativeTo(this);// 다이얼로그를 화면 중앙에 위치
         menu.setVisible(true);// 다이얼로그 표시
-
-        loadMenuData();
+        loadMenuData(); //  메뉴 데이터 불러오기
     }//GEN-LAST:event_menuButtonActionPerformed
+
     private void loadMenuData() {
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
         model.setRowCount(0); // 기존 데이터 초기화
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(menuFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t"); // 탭으로 구분된 데이터
-                if (data.length == 3) {
-                    model.addRow(new Object[]{data[0].trim(), data[1].trim(), data[2].trim()});
-                }
+        try {
+            List<String[]> menuData = menuFile.readMenuData();
+            for (String[] row : menuData) {
+                model.addRow(row);
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 읽기 실패: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "메뉴 데이터 로드 실패");
         }
     }
 
-    private void loadAccountData() {
-        DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
-        model.setRowCount(0); // 기존 데이터 초기화
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(userFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t"); // 탭으로 구분된 데이터
-                if (data.length == 3) { // 고유 문자, ID, PASS
-                    model.addRow(new Object[]{data[0].trim(), data[1].trim(), data[2].trim()});
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 읽기 실패: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     private void menuDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteActionPerformed
         // TODO add your handling code here:
@@ -857,16 +844,22 @@ public class HotelManagement extends javax.swing.JFrame {
             // 테이블에서 데이터를 가져옴
             DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
             String menuName = (String) model.getValueAt(selectedRow, 0); // 메뉴 이름
-            String price = (String) model.getValueAt(selectedRow, 1); // 금액
             String type = (String) model.getValueAt(selectedRow, 2); // 식당/룸서비스 정보
 
-            // 선택된 행 삭제
-            model.removeRow(selectedRow);
+            try {
+                // 파일에서 삭제
+                menuFile.deleteMenu(menuName, type);
 
-            // 파일 업데이트 (삭제된 메뉴 제외하고 다시 저장)
-            updateMenuFile(menuName, price, type);
+                // 테이블에서 행 삭제
+                model.removeRow(selectedRow);
+
+                // 성공 메시지
+                JOptionPane.showMessageDialog(this, "메뉴가 삭제되었습니다.");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "메뉴 삭제 중 오류 발생");
+            }
         } else {
-            JOptionPane.showMessageDialog(this, "삭제할 행을 선택하세요.", "오류", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "삭제할 행을 선택하세요.");
         }
     }//GEN-LAST:event_menuDeleteActionPerformed
 
@@ -905,7 +898,7 @@ public class HotelManagement extends javax.swing.JFrame {
 
                 // 필수 데이터 확인
                 if (newPrice.isEmpty() || newType.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "모든 필드를 입력하세요.", "오류", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "모든 필드를 입력하세요.");
                     return;
                 }
 
@@ -923,7 +916,7 @@ public class HotelManagement extends javax.swing.JFrame {
             // 다이얼로그에서 "취소" 버튼 클릭 시 동작
             jButton1.addActionListener(e -> menuchange.dispose());
         } else {
-            JOptionPane.showMessageDialog(this, "수정할 행을 선택하세요.", "오류", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "수정할 행을 선택하세요.");
         }
     }//GEN-LAST:event_menuModifyActionPerformed
 
@@ -935,22 +928,19 @@ public class HotelManagement extends javax.swing.JFrame {
 
         // 입력값 검증
         if (menuName.isEmpty() || menuPrice.isEmpty() || menuType.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "모든 필드를 입력하세요.", "오류", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "모든 필드를 입력하세요.");
             return;
         }
 
         // 중복 검사
-        if (isMenuDuplicate(menuName, menuType)) {
-            JOptionPane.showMessageDialog(this, "이미 존재하는 메뉴입니다.");
-            return;
-        }
-
-        // 파일에 추가
         try {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(menuFile, true))) {
-                writer.write(menuName + "\t" + menuPrice + "\t" + menuType);
-                writer.newLine();
+            if (menuFile.isMenuDuplicate(menuName, menuType)) {
+                JOptionPane.showMessageDialog(this, "이미 존재하는 메뉴입니다.");
+                return;
             }
+
+            // 파일에 추가
+            menuFile.addMenu(menuName, menuPrice, menuType);
 
             // 테이블에 추가
             DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
@@ -960,6 +950,9 @@ public class HotelManagement extends javax.swing.JFrame {
             jTextField4.setText("");
             jTextField3.setText("");
 
+            // 성공 메시지
+            JOptionPane.showMessageDialog(this, "메뉴가 성공적으로 추가되었습니다.");
+
             // 다이얼로그 닫기
             menuAppend.dispose();
         } catch (IOException e) {
@@ -967,25 +960,7 @@ public class HotelManagement extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private boolean isMenuDuplicate(String menuName, String menuType) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(menuFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t"); // 데이터는 탭으로 구분되어 있음
-                if (data.length == 3) {
-                    String existingMenuName = data[0].trim();
-                    String existingMenuType = data[2].trim();
-                    if (existingMenuName.equals(menuName) && existingMenuType.equals(menuType)) {
-                        return true; // 중복 메뉴 발견
-                    }
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 읽기 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
-        }
-        return false; // 중복 없음
-    }
-    
+
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         menuAppend.dispose();
@@ -1008,6 +983,25 @@ public class HotelManagement extends javax.swing.JFrame {
         loadAccountData(); // 계정 데이터 로드
     }//GEN-LAST:event_accountButtonActionPerformed
 
+    private void loadAccountData() {
+        DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
+        model.setRowCount(0); // 기존 데이터 초기화
+
+        if (!accountFile.exists()) {
+            JOptionPane.showMessageDialog(this, "계정 파일이 존재하지 않습니다. 파일 경로를 확인하세요: " + accountFile);
+            return;
+        }
+
+        try {
+            List<String[]> accounts = accountFile.readAccounts();
+            for (String[] account : accounts) {
+                model.addRow(account);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "계정 파일 읽기 실패");
+        }
+    }
+
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
         // TODO add your handling code here:
         int selectedRow = jTable3.getSelectedRow(); // 선택된 행 가져오기
@@ -1024,33 +1018,21 @@ public class HotelManagement extends javax.swing.JFrame {
             // 파일에서 데이터 삭제
             deleteFromUserFile(uniqueCode, id, pass);
         } else {
-            JOptionPane.showMessageDialog(this, "삭제할 행을 선택하세요.", "오류", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "삭제할 행을 선택하세요.");
         }
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void deleteFromUserFile(String uniqueCode, String id, String pass) {
         try {
-            // 파일 내용을 메모리에 저장
-            StringBuilder content = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new FileReader(userFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] data = line.split("\t"); // 탭으로 구분된 데이터
-                    if (data.length == 3) {
-                        // 삭제할 데이터와 일치하지 않으면 유지
-                        if (!data[0].trim().equals(uniqueCode) || !data[1].trim().equals(id) || !data[2].trim().equals(pass)) {
-                            content.append(line).append(System.lineSeparator());
-                        }
-                    }
-                }
+            if (!accountFile.exists()) {
+                JOptionPane.showMessageDialog(this, "계정 파일이 존재하지 않습니다. 파일 경로를 확인하세요: " + accountFile);
+                return;
             }
 
-            // 파일 업데이트 (삭제된 데이터 제외하고 다시 저장)
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(userFile))) {
-                writer.write(content.toString());
-            }
+            accountFile.deleteAccount(uniqueCode, id, pass);
+            JOptionPane.showMessageDialog(this, "계정이 성공적으로 삭제되었습니다.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 업데이트 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "파일 업데이트 중 오류 발생");
         }
     }
 
@@ -1069,41 +1051,26 @@ public class HotelManagement extends javax.swing.JFrame {
             jTextField6.setText(currentPass); // PASS 입력 필드에 값 설정
 
             // 다이얼로그 열기
-            accountchange.setSize(300, 200);
+            accountchange.setSize(400, 250);
             accountchange.setResizable(false);
             accountchange.setLocationRelativeTo(this);
             accountchange.setVisible(true);
         } else {
-            JOptionPane.showMessageDialog(this, "수정할 계정을 선택하세요.", "오류", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "수정할 계정을 선택하세요.");
         }
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void updateAccountFile(String id, String oldPass, String newPass) {
         try {
-            StringBuilder content = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new FileReader(userFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] data = line.split("\t"); // 탭으로 구분된 데이터
-                    if (data.length == 3) {
-                        // 수정 대상인 경우 PASS 업데이트
-                        if (data[1].trim().equals(id) && data[2].trim().equals(oldPass)) {
-                            content.append(data[0]).append("\t") // 고유 문자
-                                    .append(data[1]).append("\t") // ID
-                                    .append(newPass).append(System.lineSeparator()); // 새로운 PASS
-                        } else {
-                            content.append(line).append(System.lineSeparator()); // 기존 데이터 유지
-                        }
-                    }
-                }
+            if (!accountFile.exists()) {
+                JOptionPane.showMessageDialog(this, "계정 파일이 존재하지 않습니다. 파일 경로를 확인하세요: " + accountFile);
+                return;
             }
 
-            // 파일에 수정된 내용 저장
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(userFile))) {
-                writer.write(content.toString());
-            }
+            accountFile.updatePassword(id, oldPass, newPass);
+            JOptionPane.showMessageDialog(this, "비밀번호가 성공적으로 업데이트되었습니다.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 수정 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "파일 수정 중 오류 발생");
         }
     }
 
@@ -1130,7 +1097,7 @@ public class HotelManagement extends javax.swing.JFrame {
             // 새로운 PASS 가져오기
             String newPass = jTextField6.getText().trim();
             if (newPass.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "PASS를 입력하세요.", "오류", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "비밀번호를 입력하세요.");
                 return;
             }
 
@@ -1143,7 +1110,7 @@ public class HotelManagement extends javax.swing.JFrame {
             // 다이얼로그 닫기
             accountchange.dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "수정할 계정을 선택하세요.", "오류", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "수정할 계정을 선택하세요.");
         }
 
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -1165,18 +1132,15 @@ public class HotelManagement extends javax.swing.JFrame {
             return;
         }
 
-        // 중복 검사
-        if (isIdDuplicate(newId)) {
-            JOptionPane.showMessageDialog(this, "이미 존재하는 ID입니다.");
-            return;
-        }
-
-        // 파일에 추가
         try {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(userFile, true))) {
-                writer.write(uniqueCode + "\t" + newId + "\t" + newPass);
-                writer.newLine();
+            // 중복 검사
+            if (accountFile.isIdDuplicate(newId)) {
+                JOptionPane.showMessageDialog(this, "이미 존재하는 ID입니다.");
+                return;
             }
+
+            // 계정 추가
+            accountFile.addAccount(uniqueCode, newId, newPass);
 
             // 테이블에 추가
             DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
@@ -1192,27 +1156,10 @@ public class HotelManagement extends javax.swing.JFrame {
             // 다이얼로그 닫기
             accountAppend.dispose();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "계정 추가 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "계정 추가 중 오류 발생");
         }
     }//GEN-LAST:event_jButton7ActionPerformed
 
-    private boolean isIdDuplicate(String newId) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(userFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t"); // 데이터는 탭으로 구분되어 있음
-                if (data.length >= 2) {
-                    String existingId = data[1].trim(); // 파일에서 ID 가져오기
-                    if (existingId.equals(newId)) {
-                        return true; // 중복 ID 발견
-                    }
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 읽기 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
-        }
-        return false; // 중복 없음
-    }
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
@@ -1222,91 +1169,25 @@ public class HotelManagement extends javax.swing.JFrame {
     private void updateMenuFile(String oldMenu, String oldPrice, String oldType,
             String newMenu, String newPrice, String newType) {
         try {
-            StringBuilder content = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new FileReader(menuFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] data = line.split("\t");
-                    if (data.length == 3) {
-                        // 기존 데이터와 일치하면 수정된 데이터로 교체 (메뉴 이름은 동일)
-                        if (data[0].trim().equals(oldMenu)
-                                && data[1].trim().equals(oldPrice)
-                                && data[2].trim().equals(oldType)) {
-                            content.append(oldMenu).append("\t") // 메뉴 이름 그대로
-                                    .append(newPrice).append("\t")
-                                    .append(newType).append(System.lineSeparator());
-                        } else {
-                            // 기존 데이터를 유지
-                            content.append(line).append(System.lineSeparator());
-                        }
-                    }
-                }
-            }
+            // MenuFile 클래스의 updateMenu 메서드를 호출
+            menuFile.updateMenu(oldMenu, oldPrice, oldType, newMenu, newPrice, newType);
 
-            // 수정된 내용을 파일에 저장
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(menuFile))) {
-                writer.write(content.toString());
-            }
-
+            // 성공 메시지
+            JOptionPane.showMessageDialog(this, "메뉴가 업데이트되었습니다.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 수정 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void updateMenuFile(String menuName, String price, String type) {
-        try {
-            // 파일의 내용을 메모리에 로드
-            StringBuilder content = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new FileReader(menuFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] data = line.split("\t");
-                    if (data.length == 3) {
-                        // 삭제할 데이터와 일치하지 않는 경우만 저장
-                        if (!data[0].trim().equals(menuName)
-                                || !data[1].trim().equals(price)
-                                || !data[2].trim().equals(type)) {
-                            content.append(line).append(System.lineSeparator());
-                        }
-                    }
-                }
-            }
-
-            // 수정된 내용을 파일에 저장
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(menuFile))) {
-                writer.write(content.toString());
-            }
-
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 업데이트 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "메뉴 업데이트 중 오류 발생");
         }
     }
 
     private void updateFileAfterEdit(String floorToEdit, String newPrice) {
         try {
-            // 파일의 내용을 메모리에 로드
-            StringBuilder content = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new FileReader(roomPriceFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] data = line.split("\t");
-                    if (data[0].trim().equals(floorToEdit)) {
-                        // 해당 층수의 금액만 수정
-                        content.append(floorToEdit).append("\t").append(newPrice).append(System.lineSeparator());
-                    } else {
-                        // 나머지 데이터는 그대로 유지
-                        content.append(line).append(System.lineSeparator());
-                    }
-                }
-            }
+            // RoomFile 클래스의 updatePrice 메서드를 호출
+            roomFile.updatePrice(floorToEdit, newPrice);
 
-            // 수정된 내용을 파일에 덮어쓰기
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(roomPriceFile))) {
-                writer.write(content.toString());
-            }
-
+            // 성공 메시지
+            JOptionPane.showMessageDialog(this, "금액이 업데이트되었습니다.");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 수정 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "금액 업데이트 중 오류 발생");
         }
     }
 

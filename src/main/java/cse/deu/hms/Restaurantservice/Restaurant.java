@@ -44,19 +44,22 @@ public class Restaurant extends javax.swing.JFrame {
     }
 
     private void loadMenuData() {
-        String filePath = paths + "/src/menu_list.txt"; // 파일 경로 설정 (프로젝트 루트에 파일 존재)
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
+        try {
+            FileList fl = new FileList();
+            fl.readFile(menuFile.getAbsolutePath(), line -> {
                 String[] menuData = line.split("\t");
                 if (menuData.length == 3 && "식당".equals(menuData[2])) {
-                    String menu = menuData[0]; // 메뉴 이름
-                    int price = Integer.parseInt(menuData[1]); // 가격
-                    menuTableModel.addRow(new Object[]{menu, price}); // 식당 메뉴만 추가
+                    try {
+                        String menu = menuData[0]; // 메뉴 이름
+                        int price = Integer.parseInt(menuData[1]); // 가격
+                        menuTableModel.addRow(new Object[]{menu, price}); // 식당 메뉴만 추가
+                    } catch (NumberFormatException e) {
+                        System.err.println("잘못된 가격 형식: " + menuData[1]);
+                    }
                 }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            });
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "메뉴 데이터를 로드하는 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 
@@ -774,21 +777,17 @@ public class Restaurant extends javax.swing.JFrame {
 
     private void roomCheckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roomCheckButtonActionPerformed
         // TODO add your handling code here:
-        roomCheck.setSize(800, 400);
+        roomCheck.setSize(800, 420);
         roomCheck.setResizable(false);
         roomCheck.setLocationRelativeTo(this);
         roomCheck.setVisible(true);
 
-        // 테이블 초기화
         DefaultTableModel model = (DefaultTableModel) jTable5.getModel();
         model.setRowCount(0);
 
-        // checkIn_list.txt 파일에서 데이터 읽기
-        String filePath = paths + "/src/checkIn_list.txt";
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
+        FileList fl = new FileList();
+        try {
+            fl.readFile(paths + "/src/checkIn_list.txt", line -> {
                 String[] data = line.split("\t");
                 if (data.length >= 6) { // 유효한 데이터만 추가
                     model.addRow(new Object[]{
@@ -797,11 +796,11 @@ public class Restaurant extends javax.swing.JFrame {
                         data[2], // 예약자
                         data[3], // 전화번호
                         data[4], // 금액
-                        data[5] // 결제 유형
+                        data[7] // 결제 유형
                     });
                 }
-            }
-        } catch (IOException e) {
+            });
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "체크인 리스트를 불러오는 중 오류가 발생했습니다: " + e.getMessage());
         }
     }//GEN-LAST:event_roomCheckButtonActionPerformed
@@ -833,17 +832,14 @@ public class Restaurant extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0); // 기존 테이블 데이터 초기화
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(reservationFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // 예약 데이터를 읽어서 배열로 분리
+        FileList fl = new FileList();
+        try {
+            fl.readFile(reservationFile.getAbsolutePath(), line -> {
                 String[] reservationData = line.split("\t");
 
-                // 데이터 구조가 유효한지 확인
-                if (reservationData.length >= 9) { // 최소 9개의 필드가 있어야 함
+                if (reservationData.length >= 9) { // 유효한 데이터만 처리
                     boolean matches = false;
 
-                    // 검색어가 비어 있으면 모든 데이터를 추가
                     if (keyword.isEmpty()) {
                         matches = true; // 모든 데이터를 추가
                     } else if ("이름".equals(searchCategory)) {
@@ -852,24 +848,22 @@ public class Restaurant extends javax.swing.JFrame {
                         matches = reservationData[1].equals(keyword); // 객실번호 검색
                     }
 
-                    // 조건에 맞는 데이터를 테이블에 추가
                     if (matches) {
-                        String[] tableRow = new String[8];
-                        tableRow[0] = reservationData[0]; // 고유번호
-                        tableRow[1] = reservationData[1]; // 객실번호
-                        tableRow[2] = reservationData[2]; // 예약자
-                        tableRow[3] = reservationData[3]; // 전화번호
-                        tableRow[4] = reservationData[5]; // 금액
-                        tableRow[5] = reservationData[6]; // 체크인 날짜
-                        tableRow[6] = reservationData[7]; // 체크아웃 날짜
-                        tableRow[7] = reservationData[8]; // 결제 유형
-
-                        model.addRow(tableRow);
+                        model.addRow(new Object[]{
+                            reservationData[0], // 고유번호
+                            reservationData[1], // 객실번호
+                            reservationData[2], // 예약자
+                            reservationData[3], // 전화번호
+                            reservationData[5], // 금액
+                            reservationData[6], // 체크인 날짜
+                            reservationData[7], // 체크아웃 날짜
+                            reservationData[8] // 결제 유형
+                        });
                     }
                 }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일을 읽는 중 오류가 발생했습니다: " + e.getMessage());
+            });
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "예약 데이터를 불러오는 중 오류가 발생했습니다: " + e.getMessage());
         }
     }//GEN-LAST:event_searchButtonActionPerformed
 
@@ -940,19 +934,19 @@ public class Restaurant extends javax.swing.JFrame {
     }//GEN-LAST:event_menuReservationButtonActionPerformed
 
     private String getMenuType(String menu) {
-        String filePath = paths + "/src/menu_list.txt"; // 메뉴 파일 경로
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
+        FileList fl = new FileList();
+        final String[] type = {"알 수 없음"};
+        try {
+            fl.readFile(menuFile.getAbsolutePath(), line -> {
                 String[] menuData = line.split("\t");
                 if (menuData.length == 3 && menuData[0].equals(menu)) {
-                    return menuData[2]; // "식당" 또는 "룸서비스" 반환
+                    type[0] = menuData[2]; // "식당" 또는 "룸서비스" 설정
                 }
-            }
-        } catch (IOException e) {
+            });
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return "알 수 없음"; // 메뉴 정보가 없을 경우 기본값
+        return type[0];
     }
 
     private void reservationCheckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reservationCheckButtonActionPerformed
@@ -964,47 +958,23 @@ public class Restaurant extends javax.swing.JFrame {
         menu_reservation_check.setVisible(true);
 
         String reservationFilePath = paths + "/src/menu_reservation.txt";
+        FileList fileList = new FileList();
 
-        // 예약 확인 테이블 초기화
         DefaultTableModel reservationModel = (DefaultTableModel) jTable7.getModel();
-        reservationModel.setRowCount(0); // 기존 데이터 삭제
+        reservationModel.setRowCount(0); // 테이블 초기화
 
-        // 예약 데이터를 저장할 리스트 생성
-        List<String[]> reservationDataList = new ArrayList<>();
-
-        // 예약 파일 읽기
-        try (BufferedReader reader = new BufferedReader(new FileReader(reservationFilePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
+        try {
+            fileList.readFile(reservationFilePath, line -> {
                 String[] data = line.split("\t");
-                if (data.length == 6) { // 데이터 형식이 유효한 경우
-                    reservationDataList.add(data); // 리스트에 데이터 추가
+                if (data.length == 6) {
+                    reservationModel.addRow(new Object[]{
+                        data[0], data[1], Integer.parseInt(data[2]), Integer.parseInt(data[3]),
+                        data[4], data[5]
+                    });
                 }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "예약 파일을 불러오는 중 오류가 발생했습니다: " + e.getMessage());
-            return;
-        }
-
-        // 리스트를 역순으로 순회하여 테이블에 추가
-        for (int i = reservationDataList.size() - 1; i >= 0; i--) {
-            String[] data = reservationDataList.get(i);
-            String roomNumber = data[0];   // 객실 번호
-            String menu = data[1];         // 메뉴 이름
-            int price = Integer.parseInt(data[2]); // 가격
-            int quantity = Integer.parseInt(data[3]); // 수량
-            String time = data[4];         // 예약 시간
-            String serviceType = data[5];  // 식당 / 룸서비스
-
-            // 예약 데이터 테이블에 추가
-            reservationModel.addRow(new Object[]{
-                roomNumber,
-                menu,
-                price,
-                quantity,
-                time,
-                serviceType // "식당" 또는 "룸서비스"
             });
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "예약 데이터를 불러오는 중 오류가 발생했습니다: " + e.getMessage());
         }
     }//GEN-LAST:event_reservationCheckButtonActionPerformed
 
@@ -1089,39 +1059,27 @@ public class Restaurant extends javax.swing.JFrame {
 
     private void updateRoomTotal(String roomNumber, int additionalAmount) {
         String checkInFilePath = paths + "/src/checkIn_list.txt";
-        List<String> updatedLines = new ArrayList<>();
+        FileList fileList = new FileList();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(checkInFilePath))) {
-            String line;
-
-            while ((line = reader.readLine()) != null) {
+        try {
+            // 파일 내용을 리스트에 저장
+            List<String> updatedLines = new ArrayList<>();
+            fileList.readFile(checkInFilePath, line -> {
                 String[] data = line.split("\t");
-
                 if (data.length >= 6 && data[1].equals(roomNumber)) {
-                    // 기존 객실 금액에 추가 금액 더하기
+                    // 해당 객실 번호의 금액 수정
                     int currentAmount = Integer.parseInt(data[4]);
-                    int newAmount = currentAmount + additionalAmount;
-                    data[4] = String.valueOf(newAmount); // 금액 업데이트
-
-                    // 업데이트된 데이터를 다시 하나의 문자열로 결합
-                    updatedLines.add(String.join("\t", data));
+                    data[4] = String.valueOf(currentAmount + additionalAmount);
+                    updatedLines.add(String.join("\t", data)); // 수정된 라인 저장
                 } else {
-                    updatedLines.add(line); // 다른 객실 데이터는 그대로 추가
+                    updatedLines.add(line); // 원본 라인 그대로 저장
                 }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "객실 금액 업데이트 중 오류가 발생했습니다: " + e.getMessage());
-            return;
-        }
+            });
 
-        // 변경된 내용을 다시 파일에 저장
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(checkInFilePath))) {
-            for (String updatedLine : updatedLines) {
-                writer.write(updatedLine);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "객실 금액 저장 중 오류가 발생했습니다: " + e.getMessage());
+            // 수정된 내용을 파일에 다시 쓰기
+            fileList.writeFile(checkInFilePath, updatedLines, false);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "객실 금액 업데이트 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 

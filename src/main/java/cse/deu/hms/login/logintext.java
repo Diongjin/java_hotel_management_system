@@ -24,16 +24,17 @@ public class logintext {
 
     // 파일을 행 단위로 읽어와 ArrayList에 저장하는 메소드
     private void readFile(File file) {
-        try (FileInputStream fis = new FileInputStream(file); BufferedReader is = new BufferedReader(new InputStreamReader(fis))) {
+        try (FileInputStream fis = new FileInputStream(file); 
+                BufferedReader is = new BufferedReader(new InputStreamReader(fis))) {
 
             String line;
             while ((line = is.readLine()) != null) {
                 id_list.add(line);
             }
         } catch (FileNotFoundException ex) {
-            System.err.println("파일을 찾을 수 없습니다: " + ex.getMessage());
+            System.err.println("파일 오류 발생");
         } catch (IOException e) {
-            System.err.println("IO 오류가 발생했습니다: " + e.getMessage());
+            System.err.println("예외처리 오류 발생");
         }
     }
 

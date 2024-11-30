@@ -1,6 +1,5 @@
 M	admin	1234
 E	user1	pass1
 E	user2	pass2
-E	user3	pass3
-E	user4	pass3
-E	user5	1234
+E	user3	pass4
+E	user4	pass4

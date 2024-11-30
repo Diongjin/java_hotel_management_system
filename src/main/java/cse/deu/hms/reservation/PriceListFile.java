@@ -25,7 +25,6 @@ public class PriceListFile extends JFrame {
 
     public PriceListFile(JTextField roomNumberField) {
         this.roomNumberField = roomNumberField;
-        setTitle("가격 목록");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -55,7 +54,7 @@ public class PriceListFile extends JFrame {
             }
             return dataList.toArray(new Object[0][2]);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일을 읽는 중 오류가 발생했습니다: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "파일을 읽는 중 오류가 발생했습니다");
             return new Object[0][0]; // 오류 발생 시 빈 데이터 반환
         }
     }

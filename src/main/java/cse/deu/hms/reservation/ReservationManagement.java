@@ -22,6 +22,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JTextField;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,12 +35,10 @@ public class ReservationManagement extends javax.swing.JFrame {
      * Creates new form ReservationManagement2
      */
     private String paths = System.getProperty("user.dir");  // 프로젝트 루트 경로
-    private File reservationFile = new File(paths + "/src/reservation.txt"); // src폴더에 파일이 있음
-    private File roomPriceFile = new File(paths + "/src/roomPrice.txt"); // src폴더에 파일이 있음
     private ButtonGroup paymentButtonGroup;
     private JDateChooser checkInDateChooser;
     private JDateChooser checkOutDateChooser;
-    private ArrayList<String[]> reservationList;  // 예약 정보를 담을 리스트
+    private ArrayList<ReservationInfo> reservationList;  // 예약 정보를 담을 리스트
 
     public ReservationManagement() {
         initComponents();
@@ -47,11 +46,17 @@ public class ReservationManagement extends javax.swing.JFrame {
         setLocationRelativeTo(null);
 
         ReservationFile rf = new ReservationFile(); // 로그인 텍스트 객체 생성
-        reservationList = rf.ReservationCheck(); // 예약 정보 읽어오기
-        showClientInfo();  // 테이블에 예약 정보 표시
+        ArrayList<ReservationInfo> rawReservations = rf.ReservationCheck(); // 예약 정보 읽기
+
+        reservationList = new ArrayList<>();
+        for (ReservationInfo data : rawReservations) {
+            reservationList.add(data); // 이미 ReservationInfo 객체이므로 그대로 추가
+        }
+
+        showClientInfo(); // 테이블에 예약 정보 표시
     }
 
-    private void additionalInit() {
+    public void additionalInit() {
         // 체크인/체크아웃 JDateChooser 초기화
         // 체크인/체크아웃 JDateChooser 초기화
         checkInDateChooser = new JDateChooser();
@@ -81,33 +86,22 @@ public class ReservationManagement extends javax.swing.JFrame {
         });
     }
 
-    private void showClientInfo() {
+    public void showClientInfo() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);  // 기존 테이블 내용 지우기
 
-        for (String[] reservation : reservationList) {
-            model.addRow(reservation);  // 예약 정보 추가
-        }
-    }
-
-    private void initializeRadioButtonActions() {
-        jRadioButton1.addActionListener(e -> {
-        });
-        jRadioButton2.addActionListener(e -> {
-        });
-    }
-
-    private void openDatePicker(javax.swing.JTextField targetField) {
-        JDateChooser dateChooser = new JDateChooser();
-        dateChooser.setMinSelectableDate(new Date()); // 오늘 날짜 이후만 선택 가능
-
-        int result = JOptionPane.showConfirmDialog(this, dateChooser, "날짜 선택", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-            Date selectedDate = dateChooser.getDate();
-            if (selectedDate != null) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                targetField.setText(dateFormat.format(selectedDate)); // 선택된 날짜 표시
-            }
+        for (ReservationInfo reservation : reservationList) {
+            model.addRow(new Object[]{
+                reservation.getUniqueId(),
+                reservation.getRoomNumber(),
+                reservation.getGuestName(),
+                reservation.getPhoneNumber(),
+                reservation.getGuestCount(),
+                reservation.getRoomRate(),
+                reservation.getCheckInDate(),
+                reservation.getCheckOutDate(),
+                reservation.getPaymentMethod()
+            });
         }
     }
 
@@ -230,7 +224,7 @@ public class ReservationManagement extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         updataButton = new javax.swing.JButton();
-        detailPrice = new javax.swing.JButton();
+        jLabel19 = new javax.swing.JLabel();
 
         jLabel2.setFont(new java.awt.Font("맑은 고딕", 1, 18)); // NOI18N
         jLabel2.setText("추가 등록");
@@ -1044,12 +1038,8 @@ public class ReservationManagement extends javax.swing.JFrame {
             }
         });
 
-        detailPrice.setText("상세금액");
-        detailPrice.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                detailPriceActionPerformed(evt);
-            }
-        });
+        jLabel19.setFont(new java.awt.Font("맑은 고딕", 0, 14)); // NOI18N
+        jLabel19.setText("예약리스트");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1061,8 +1051,6 @@ public class ReservationManagement extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(detailPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(updataButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1071,23 +1059,26 @@ public class ReservationManagement extends javax.swing.JFrame {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 987, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
+                        .addGap(350, 350, 350)
+                        .addComponent(jLabel19)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(updataButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(detailPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(cancelButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -1095,12 +1086,11 @@ public class ReservationManagement extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private Date getTomorrow() {
+    /*private Date getTomorrow() {
         // 현재 날짜 기준으로 다음 날 반환
         Date today = new Date();
         return new Date(today.getTime() + (1000 * 60 * 60 * 24)); // 하루 추가
-    }
-
+    }*/
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
@@ -1120,7 +1110,7 @@ public class ReservationManagement extends javax.swing.JFrame {
 
         // 선택된 행의 데이터를 가져오기
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        String roomNumber = model.getValueAt(selectedRow, 0).toString(); // 객실번호 추출
+        String roomNumber = model.getValueAt(selectedRow, 1).toString(); // 객실번호 추출
 
         // 삭제 확인 대화상자 표시
         int confirm = JOptionPane.showConfirmDialog(this,
@@ -1129,73 +1119,23 @@ public class ReservationManagement extends javax.swing.JFrame {
                 JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
+            // ReservationFile 클래스 활용
+            ReservationFile reservationFile = new ReservationFile(); // 파일 작업 객체 생성
+            ArrayList<ReservationInfo> reservationList = reservationFile.ReservationCheck(); // 현재 예약 리스트 불러오기
+
+            // ReservationFile 클래스의 deleteReservation 호출
+            reservationFile.deleteReservation(reservationList, roomNumber);
+
+            // 삭제된 리스트를 다시 저장
+            reservationFile.saveReservations(reservationList);
+
             // JTable에서 행 삭제
             model.removeRow(selectedRow);
 
-            // 예약 리스트에서 제거
-            deleteReservation(roomNumber);
-
-            // 파일 저장
-            saveReservations();
-
-            JOptionPane.showMessageDialog(this, "선택된 예약이 삭제되었습니다.");
+            JOptionPane.showMessageDialog(this, "예약이 삭제되었습니다.");
         }
     }//GEN-LAST:event_deleteButtonActionPerformed
 
-    private void deleteReservation(String roomNumber) {     // 예약 내용 삭제
-        for (int i = 0; i < reservationList.size(); i++) {
-            if (reservationList.get(i)[0].equals(roomNumber)) {
-                String guestName = reservationList.get(i)[2]; // 예약자 이름 가져오기
-                reservationList.remove(i); // 예약 리스트에서 삭제
-                deleteCardData(guestName); // 카드 정보 삭제
-                return; // 한 번 삭제 후 종료
-            }
-        }
-
-        JOptionPane.showMessageDialog(null, "해당 객실번호의 예약을 찾을 수 없습니다.");
-    }
-
-    private void deleteCardData(String guestName) {
-        File cardFile = new File(paths + "/src/reservationCard.txt");
-
-        // 메모리에 전체 내용을 저장
-        StringBuilder updatedContent = new StringBuilder();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(cardFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // 각 줄의 데이터를 탭(\t)으로 분리
-                String[] cardData = line.split("\t");
-
-                // 첫 번째 요소가 이름인 경우, 삭제하려는 이름과 일치하지 않으면 저장
-                if (!cardData[0].equals(guestName)) {
-                    updatedContent.append(line).append(System.lineSeparator());
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "카드 정보를 읽는 중 오류가 발생했습니다.");
-            return;
-        }
-
-        // 기존 파일 덮어쓰기
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(cardFile))) {
-            writer.write(updatedContent.toString());
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "카드 정보를 업데이트하는 중 오류가 발생했습니다.");
-        }
-    }
-
-    private void saveReservations() {       // 예약 내용 저장.
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/reservation.txt"))) {
-            for (String[] reservation : reservationList) {
-                String reservationData = String.join("\t", reservation);
-                writer.write(reservationData);
-                writer.newLine(); // 줄 바꿈
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 업데이트 중 오류가 발생했습니다.");
-        }
-    }
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         addReservation.setSize(500, 550); // 너비 400, 높이 500으로 설정
@@ -1215,27 +1155,24 @@ public class ReservationManagement extends javax.swing.JFrame {
         }
 
         // 선택된 예약 데이터를 수정 창에 로드
-        String[] selectedReservation = reservationList.get(selectedRow);
+        ReservationInfo selectedReservation = reservationList.get(selectedRow);
 
-        String guestName = selectedReservation[2];
-        String[] nameParts = guestName.split(" ", 2);
-        String lastName = nameParts.length > 0 ? nameParts[0] : ""; // 성
-        String firstName = nameParts.length > 1 ? nameParts[1] : ""; // 이름
+        String[] nameParts = selectedReservation.getGuestName().split(" ");
+        jTextField7.setText(nameParts.length > 0 ? nameParts[0] : ""); // 성
+        jTextField8.setText(nameParts.length > 1 ? nameParts[1] : ""); // 이름
+        jTextField4.setText(selectedReservation.getRoomNumber()); // 객실 번호
+        String[] phoneParts = selectedReservation.getPhoneNumber().split("-");
+        jTextField11.setText(phoneParts.length > 0 ? phoneParts[0] : ""); // 전화번호 앞자리
+        centerNum2.setText(phoneParts.length > 1 ? phoneParts[1] : ""); // 중간자리
+        backNum2.setText(phoneParts.length > 2 ? phoneParts[2] : ""); // 뒷자리
+        jComboBox3.setSelectedItem(selectedReservation.getGuestCount()); // 투숙 인원
+        jTextField6.setText(selectedReservation.getRoomRate()); // 금액
+        checkinText2.setText(selectedReservation.getCheckInDate()); // 체크인 날짜
+        checkoutText2.setText(selectedReservation.getCheckOutDate()); // 체크아웃 날짜
 
-        jTextField7.setText(lastName); // 성
-        jTextField8.setText(firstName); // 이름
-        jTextField4.setText(selectedReservation[1]); // 객실 번호
-        jTextField11.setText(selectedReservation[3].split("-")[0]); // 전화번호 앞자리
-        centerNum2.setText(selectedReservation[3].split("-")[1]); // 전화번호 중간자리
-        backNum2.setText(selectedReservation[3].split("-")[2]); // 전화번호 뒷자리
-        jComboBox3.setSelectedItem(selectedReservation[4]); // 투숙 인원
-        jTextField6.setText(selectedReservation[5]); // 금액
-        checkinText2.setText(selectedReservation[6]); // 체크인 날짜
-        checkoutText2.setText(selectedReservation[7]); // 체크아웃 날짜
-
-        if ("카드".equals(selectedReservation[8])) {
+        if ("카드".equals(selectedReservation.getPaymentMethod())) {
             jRadioButton3.setSelected(true);
-        } else if ("현금".equals(selectedReservation[8])) {
+        } else if ("현금".equals(selectedReservation.getPaymentMethod())) {
             jRadioButton4.setSelected(true);
         }
 
@@ -1285,35 +1222,35 @@ public class ReservationManagement extends javax.swing.JFrame {
 
     }//GEN-LAST:event_checkoutdateActionPerformed
 
-    private boolean isRoomNumberDuplicateInAllLists(String roomNumber) {
-        // 1. 예약 리스트에서 중복 확인
-        for (String[] reservation : reservationList) {
-            if (reservation[1].equals(roomNumber)) { // 객실 번호 중복 확인
-                return true; // 예약 리스트에서 중복 발견
+    private boolean isRoomNumberDuplication(String roomNumber) {
+        // 예약 리스트에서 중복 확인
+        for (ReservationInfo reservation : reservationList) {
+            if (reservation.getRoomNumber().equals(roomNumber)) {
+                JOptionPane.showMessageDialog(this, "이미 예약된 객실 번호입니다: " + roomNumber);
+                return true;
             }
         }
 
-        // 2. 체크인 리스트에서 중복 확인
-        File checkInFile = new File(paths + "/src/checkIn_list.txt"); // 체크인 리스트 파일 경로
-        if (!checkInFile.exists()) {
-            JOptionPane.showMessageDialog(this, "체크인 리스트 파일이 존재하지 않습니다. 경로를 확인하세요.");
-            return false; // 파일이 없으므로 중복 처리 중단
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t");
-                if (data.length > 1 && data[1].equals(roomNumber)) { // 객실 번호 중복 확인
-                    return true; // 체크인 리스트에서 중복 발견
+        // 체크인 리스트에서 중복 확인
+        File checkInFile = new File(paths + "/src/checkIn_list.txt");
+        if (checkInFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] data = line.split("\t");
+                    if (data.length > 1 && data[1].equals(roomNumber)) {
+                        JOptionPane.showMessageDialog(this, "이미 체크인된 객실 번호입니다: " + roomNumber);
+                        return true;
+                    }
                 }
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "체크인 리스트를 읽는 중 오류가 발생했습니다.");
             }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "체크인 리스트를 읽는 중 오류가 발생했습니다: " + e.getMessage());
         }
 
         return false; // 중복이 없는 경우
     }
+
 
     private void realAddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_realAddButtonActionPerformed
         // TODO add your handling code here:
@@ -1332,12 +1269,12 @@ public class ReservationManagement extends javax.swing.JFrame {
 
         String roomNumber = jTextField3.getText().trim();
         if (roomNumber.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "객실 번호를 입력하거나 조회 버튼을 사용하여 선택하세요.");
+            JOptionPane.showMessageDialog(this, "객실 번호를 입력하세요.");
             return;
         }
 
         // 객실 번호 중복 확인 (예약 리스트와 체크인 리스트 모두 확인)
-        if (isRoomNumberDuplicateInAllLists(roomNumber)) {
+        if (isRoomNumberDuplication(roomNumber)) {
             JOptionPane.showMessageDialog(this, "이미 예약되었거나 체크인된 객실 번호입니다. 다른 객실 번호를 입력하세요.");
             return;
         }
@@ -1356,19 +1293,27 @@ public class ReservationManagement extends javax.swing.JFrame {
             return;
         }
 
+        int guestCountNum = Integer.parseInt(guestCount.equals("default") ? "0" : guestCount);
+        if (guestCountNum > 2) {
+            int addGuest = guestCountNum - 2;
+            int addMoney = addGuest * 50000;
+            JOptionPane.showMessageDialog(this, "투숙 인원이 2명을 초과하여 추가 요금 " + addMoney + "원이 발생합니다.");
+        }
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String checkInStr = dateFormat.format(checkInDate);
         String checkOutStr = dateFormat.format(checkOutDate);
 
-        String[] newReservation = {
-            uniqueId, roomNumber, guestName, phoneNumber, guestCount, roomRate, checkInStr, checkOutStr, paymentMethod
-        };
-        reservationList.add(newReservation);
+        reservationList.add(new ReservationInfo(uniqueId, roomNumber, guestName, phoneNumber,
+                guestCount, roomRate, checkInStr, checkOutStr, paymentMethod));
 
-        saveReservations();
-        showClientInfo();
+        // 파일 저장: 전체 리스트를 저장
+        ReservationFile reservationFile = new ReservationFile();
+        reservationFile.saveReservations(reservationList);
 
         JOptionPane.showMessageDialog(this, "예약이 추가되었습니다.");
+        addReservation.dispose();
+        showClientInfo();
         addReservation.dispose();
 
         // 입력 필드 초기화
@@ -1390,11 +1335,12 @@ public class ReservationManagement extends javax.swing.JFrame {
         ArrayList<Integer> existingIds = new ArrayList<>();
 
         // 예약 리스트에서 고유번호 수집
-        for (String[] reservation : reservationList) {
+        for (ReservationInfo reservation : reservationList) {
             try {
-                int currentId = Integer.parseInt(reservation[0]); // 고유번호는 배열의 첫 번째 요소
+                int currentId = Integer.parseInt(reservation.getUniqueId()); // ReservationInfo의 getUniqueId() 호출
                 existingIds.add(currentId); // 예약 리스트의 고유번호 추가
             } catch (NumberFormatException e) {
+                // 고유번호가 숫자가 아닐 경우 예외 무시
             }
         }
 
@@ -1455,9 +1401,9 @@ public class ReservationManagement extends javax.swing.JFrame {
             return;
         }
 
-        String uniqueId = reservationList.get(selectedRow)[0]; // 수정 중인 예약의 고유 번호
+        ReservationInfo selectedReservation = reservationList.get(selectedRow); // 수정 중인 예약의 고유 번호
 
-        if (isRoomNumberDuplicateInAllLists(roomNumber)) {
+        if (isRoomNumberDuplication(roomNumber)) {
             JOptionPane.showMessageDialog(this, "이미 예약된 객실 번호입니다. 다른 객실 번호를 입력하세요.");
             return;
         }
@@ -1465,40 +1411,49 @@ public class ReservationManagement extends javax.swing.JFrame {
         // 수정된 데이터 가져오기
         String updatedGuestName = jTextField7.getText().trim() + " " + jTextField8.getText().trim();
         String updatedPhoneNumber = jTextField11.getText().trim() + "-" + centerNum2.getText().trim() + "-" + backNum2.getText().trim();
-        String updatedVisitorCount = (String) jComboBox3.getSelectedItem();
+        String updatedguestCount = (String) jComboBox3.getSelectedItem();
         String updatedRoomRate = jTextField6.getText().trim();
         String updatedCheckInDate = checkinText2.getText().trim();
         String updatedCheckOutDate = checkoutText2.getText().trim();
         String paymentMethod = jRadioButton3.isSelected() ? "카드" : jRadioButton4.isSelected() ? "현금" : "";
 
-        if (updatedGuestName.isEmpty() || updatedPhoneNumber.isEmpty() || updatedVisitorCount.equals("default")
+        if (updatedGuestName.isEmpty() || updatedPhoneNumber.isEmpty() || updatedguestCount.equals("default")
                 || updatedRoomRate.isEmpty() || updatedCheckInDate.isEmpty() || updatedCheckOutDate.isEmpty() || paymentMethod.isEmpty()) {
             JOptionPane.showMessageDialog(this, "모든 필드를 올바르게 입력해주세요.");
             return;
+        }   // 유효성 검사
+
+        int guestCountNum = Integer.parseInt(updatedguestCount.equals("default") ? "0" : updatedguestCount);
+        if (guestCountNum > 2) {
+            int addGuest = guestCountNum - 2;
+            int addMoney = addGuest * 50000;
+            JOptionPane.showMessageDialog(this, "투숙 인원이 2명을 초과하여 1인당 추가 요금 " + addMoney + "원이 발생합니다.");
         }
 
         // reservationList에서 해당 예약의 고유번호로 데이터를 업데이트
-        String[] updatedReservation = {
-            uniqueId,
-            roomNumber,
-            updatedGuestName,
-            updatedPhoneNumber,
-            updatedVisitorCount,
-            updatedRoomRate,
-            updatedCheckInDate,
-            updatedCheckOutDate,
-            paymentMethod
-        };
+        ReservationInfo updatedReservation = new ReservationInfo(
+                reservationList.get(selectedRow).getUniqueId(), // 고유 ID 유지
+                roomNumber,
+                updatedGuestName,
+                updatedPhoneNumber,
+                updatedguestCount,
+                updatedRoomRate,
+                updatedCheckInDate,
+                updatedCheckOutDate,
+                paymentMethod
+        );
 
-        reservationList.set(selectedRow, updatedReservation);
+        // ReservationFile 클래스를 사용하여 수정 작업 처리
+        ReservationFile reservationFile = new ReservationFile();
+        ArrayList<ReservationInfo> reservationList = reservationFile.ReservationCheck(); // 파일에서 리스트 로드
 
-        // 파일에 저장
-        saveReservations();
+        reservationList.set(selectedRow, updatedReservation); // 선택된 행의 데이터 업데이트
+        reservationFile.saveReservations(reservationList); // 업데이트된 리스트 저장
 
         // 테이블 갱신
         showClientInfo();
 
-        // 성공 메시지 출력 및 수정 창 닫기
+        // 성공 메시지 출력 및 창 닫기
         JOptionPane.showMessageDialog(this, "예약이 수정되었습니다.");
         changeReservation.dispose();
     }//GEN-LAST:event_realChangeButtonActionPerformed
@@ -1523,59 +1478,6 @@ public class ReservationManagement extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_checkindate2ActionPerformed
 
-    private void checkInReservation(String uniqueId, String roomNumber) {
-        // 예약 리스트에서 해당 고유번호와 객실번호를 확인 및 삭제
-        boolean isFound = false;
-        for (int i = 0; i < reservationList.size(); i++) {
-            String[] reservation = reservationList.get(i);
-            if (reservation[0].equals(uniqueId) && reservation[1].equals(roomNumber)) {
-                isFound = true;
-
-                // 체크인 리스트에 추가
-                saveCheckInData(reservation);
-
-                // 예약 리스트에서 제거
-                reservationList.remove(i);
-
-                // 파일 업데이트
-                saveReservations();
-                showClientInfo();
-
-                JOptionPane.showMessageDialog(this, "체크인이 완료되었습니다.");
-                break;
-            }
-        }
-
-        if (!isFound) {
-            JOptionPane.showMessageDialog(this, "해당 예약을 찾을 수 없거나 이미 체크인된 상태입니다.");
-        }
-    }
-
-    private void saveCheckInData(String[] checkInData) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(paths + "/src/checkIn_list.txt", true))) {
-            String data = String.join("\t", checkInData);
-            writer.write(data);
-            writer.newLine(); // 줄 바꿈
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "체크인 데이터를 저장하는 중 오류가 발생했습니다.");
-        }
-    }
-
-    private boolean isDuplicateInCheckInList(String uniqueId, String roomNumber) {
-        File checkInFile = new File(paths + "/src/checkIn_list.txt");
-        try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t");
-                if (data[0].equals(uniqueId) && data[1].equals(roomNumber)) {
-                    return true; // 중복 발견
-                }
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "체크인 리스트를 읽는 중 오류가 발생했습니다.");
-        }
-        return false;
-    }
 
     private void checkoutdate2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkoutdate2ActionPerformed
         // TODO add your handling code here:
@@ -1768,7 +1670,10 @@ public class ReservationManagement extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "카드 정보를 확인할 예약을 선택하세요.");
             return;
         }
-        String guestName = reservationList.get(selectedRow)[2]; // 예약자 이름 가져오기
+
+        // ReservationInfo 객체에서 예약자 이름 가져오기
+        ReservationInfo selectedReservation = reservationList.get(selectedRow);
+        String guestName = selectedReservation.getGuestName();
 
         // reservationCard.txt에서 카드 정보 확인
         String[] cardInfo = getCardInfo(guestName);
@@ -1777,11 +1682,16 @@ public class ReservationManagement extends javax.swing.JFrame {
             // 카드 정보가 있는 경우
             JOptionPane.showMessageDialog(this, "이미 등록된 카드 정보가 있습니다.");
             // 카드 정보 채우기
-            jTextField17.setText(cardInfo[1].split("-")[0]);
-            jTextField24.setText(cardInfo[1].split("-")[1]);
-            jTextField23.setText(cardInfo[1].split("-")[2]);
-            jTextField26.setText(cardInfo[1].split("-")[3]);
+            String[] cardNumberParts = cardInfo[1].split("-");
+            if (cardNumberParts.length == 4) {
+                jTextField17.setText(cardNumberParts[0]);
+                jTextField24.setText(cardNumberParts[1]);
+                jTextField23.setText(cardNumberParts[2]);
+                jTextField26.setText(cardNumberParts[3]);
+            }
             jTextField22.setText(cardInfo[2]); // CVC
+
+            // 성과 이름 채우기
             String[] nameParts = cardInfo[0].split(" ");
             if (nameParts.length > 1) {
                 jTextField15.setText(nameParts[0]); // 성
@@ -1825,10 +1735,6 @@ public class ReservationManagement extends javax.swing.JFrame {
         // TODO add your handling code here:
         change_Card.dispose();
     }//GEN-LAST:event_registeCard1ActionPerformed
-
-    private void detailPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailPriceActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_detailPriceActionPerformed
 
     private String loadFloorPrice(String roomNumber) {
         if (roomNumber == null || roomNumber.isEmpty()) {
@@ -1882,7 +1788,7 @@ public class ReservationManagement extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "객실 요금 파일을 읽는 중 오류가 발생했습니다.");
         }
 
-        JOptionPane.showMessageDialog(this, "해당 층의 객실 요금을 찾을 수 없습니다. 기본 요금을 사용합니다.");
+        JOptionPane.showMessageDialog(this, "해당 층의 객실 요금을 찾을 수 없습니다. ");
         return null;
     }
 
@@ -1892,20 +1798,16 @@ public class ReservationManagement extends javax.swing.JFrame {
             // 체크인 및 체크아웃 날짜 파싱
             Date checkIn = dateFormat.parse(checkInDate);
             Date checkOut = dateFormat.parse(checkOutDate);
-
             // 숙박일수 계산
             long diffInMillies = Math.abs(checkOut.getTime() - checkIn.getTime());
             long days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-
             // 기본 요금 가져오기
             String roomRateStr = loadFloorPrice(roomNumber);
             if (roomRateStr == null || roomRateStr.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "객실 요금을 확인할 수 없습니다.");
                 return 0;
             }
-
             int ratePerDay = Integer.parseInt(roomRateStr);
-
             // 투숙 인원 확인 및 추가 요금 계산
             int guestCount = Integer.parseInt(guestCountStr.equals("default") ? "0" : guestCountStr);
             if (guestCount <= 0) {
@@ -2029,7 +1931,6 @@ public class ReservationManagement extends javax.swing.JFrame {
     private javax.swing.JButton checkoutdate;
     private javax.swing.JButton checkoutdate2;
     private javax.swing.JButton deleteButton;
-    private javax.swing.JButton detailPrice;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel jLabel1;
@@ -2042,6 +1943,7 @@ public class ReservationManagement extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;

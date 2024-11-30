@@ -159,7 +159,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="0" green="0" red="0" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="&#xc608;&#xc57d; &#xad00;&#xb9ac;"/>
+                    <Property name="text" type="java.lang.String" value="&#xc608;&#xc57d; "/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reservationButton1ActionPerformed"/>
@@ -173,7 +173,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="0" green="0" red="0" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="&lt;html&gt; &#xccb4;&#xd06c;&#xc778;&lt;br&gt;&#xccb4;&#xd06c;&#xc544;&#xc6c3;&lt;/html&gt;"/>
+                    <Property name="text" type="java.lang.String" value="&#xccb4;&#xd06c;&#xc778;"/>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                   </Properties>

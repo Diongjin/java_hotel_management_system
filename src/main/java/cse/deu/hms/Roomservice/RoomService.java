@@ -21,35 +21,40 @@ public class RoomService extends javax.swing.JFrame {
     private File reservationFile = new File(paths + "/src/reservation.txt"); // src폴더에 파일이 있음
     private DefaultTableModel menuTableModel;
     private DefaultTableModel purchaseTableModel;
-    private final FileManager fileManager;
+    private final FileManager fm;
 
     /**
      * Creates new form RoomService
      */
     public RoomService() {
         initComponents();
+        fm = new FileManager();
         initializeTableModels();
-        fileManager = new FileManager();
         loadMenuData();
     }
 
     private void initializeTableModels() {
         menuTableModel = new DefaultTableModel(new Object[][]{}, new String[]{"메뉴", "가격"});
         purchaseTableModel = new DefaultTableModel(new Object[][]{}, new String[]{"메뉴", "가격", "수량"});
-
         jTable1.setModel(menuTableModel);
         jTable2.setModel(purchaseTableModel);
     }
 
     private void loadMenuData() {
-        List<String[]> menuDataList = fileManager.readFile("menu_list.txt"); // FileManager로 파일 읽기
+        try {
+            List<String[]> menuDataList = fm.readFile("menu_list.txt");
 
-        for (String[] menuData : menuDataList) {
-            if (menuData.length == 3 && "룸서비스".equals(menuData[2])) {
-                String menu = menuData[0]; // 메뉴 이름
-                int price = Integer.parseInt(menuData[1]); // 가격
-                menuTableModel.addRow(new Object[]{menu, price}); // 메뉴 데이터 추가
+            for (String[] menuData : menuDataList) {
+                if (menuData.length == 3 && "룸서비스".equals(menuData[2])) {
+                    String menu = menuData[0];
+                    int price = Integer.parseInt(menuData[1]);
+                    menuTableModel.addRow(new Object[]{menu, price});
+                }
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "메뉴 가격 형식이 오류");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "메뉴 데이터 불러오는 중 오류 발생");
         }
     }
 
@@ -836,7 +841,7 @@ public class RoomService extends javax.swing.JFrame {
         reservationModel.setRowCount(0); // 기존 데이터 삭제
 
         // 예약 데이터를 저장할 리스트 생성
-        List<String[]> reservationDataList = fileManager.readFile("menu_reservation.txt");
+        List<String[]> reservationDataList = fm.readFile("menu_reservation.txt");
 
         // 예약 파일 읽기
         if (reservationDataList.isEmpty()) {
@@ -844,7 +849,7 @@ public class RoomService extends javax.swing.JFrame {
             return;
         }
 
-// 리스트를 역순으로 순회하여 테이블에 추가
+        // 리스트를 역순으로 순회하여 테이블에 추가
         for (int i = reservationDataList.size() - 1; i >= 0; i--) {
             String[] data = reservationDataList.get(i);
             reservationModel.addRow(new Object[]{data[0], data[1], Integer.parseInt(data[2]),
@@ -902,7 +907,7 @@ public class RoomService extends javax.swing.JFrame {
                         data[2], // 예약자
                         data[3], // 전화번호
                         data[4], // 금액
-                        data[5] // 결제 유형
+                        data[7] // 결제 유형
                     });
                 }
             }

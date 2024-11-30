@@ -62,7 +62,7 @@ public class Management extends javax.swing.JFrame {
 
         reservationButton1.setBackground(new java.awt.Color(153, 153, 153));
         reservationButton1.setForeground(new java.awt.Color(0, 0, 0));
-        reservationButton1.setText("예약 관리");
+        reservationButton1.setText("예약 ");
         reservationButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reservationButton1ActionPerformed(evt);
@@ -71,7 +71,7 @@ public class Management extends javax.swing.JFrame {
 
         checkInButton1.setBackground(new java.awt.Color(153, 153, 153));
         checkInButton1.setForeground(new java.awt.Color(0, 0, 0));
-        checkInButton1.setText("<html> 체크인<br>체크아웃</html>");
+        checkInButton1.setText("체크인");
         checkInButton1.setToolTipText("");
         checkInButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         checkInButton1.addActionListener(new java.awt.event.ActionListener() {

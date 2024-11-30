@@ -107,4 +107,18 @@ public class ReservationInfo {
         this.paymentMethod = paymentMethod;
     }
 
+    @Override
+    public String toString() {
+        return String.join("\t",
+                uniqueId,
+                roomNumber,
+                guestName,
+                phoneNumber,
+                guestCount,
+                roomRate,
+                checkInDate,
+                checkOutDate,
+                paymentMethod
+        );
+    }
 }

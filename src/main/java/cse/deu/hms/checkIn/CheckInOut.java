@@ -107,20 +107,20 @@ public class CheckInOut extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "고유번호", "객실번호", "예약자", "전화번호", "금액", "체크인 날짜", "체크아웃 날짜", "결제 유형", "상태"
+                "고유번호", "객실번호", "예약자", "전화번호", "금액", "체크인 날짜", "체크아웃 날짜", "결제 유형"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -351,21 +351,21 @@ public class CheckInOut extends javax.swing.JFrame {
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "객실 번호", "메뉴", "개수", "예약시간", "식당 / 룸서비스", "결제 완료 / 미결제"
+                "객실 번호", "메뉴", "개수", "예약시간", "식당 / 룸서비스"
             }
         ));
         jScrollPane2.setViewportView(jTable2);
@@ -416,7 +416,7 @@ public class CheckInOut extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "객실 번호", "메뉴", "수량", "객실 청구 / 예약"
+                "객실 번호", "메뉴", "금액", "객실 청구 / 예약"
             }
         ));
         jScrollPane5.setViewportView(jTable5);
@@ -459,7 +459,7 @@ public class CheckInOut extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
                     .addGroup(checkout_OKLayout.createSequentialGroup()
                         .addGroup(checkout_OKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, checkout_OKLayout.createSequentialGroup()
@@ -568,35 +568,31 @@ public class CheckInOut extends javax.swing.JFrame {
         checkin.setLocationRelativeTo(this);// 다이얼로그를 화면 중앙에 위치
         checkin.setVisible(true);// 다이얼로그 표시
 
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0);
+        CheckInFile checkInFile = new CheckInFile();
 
-        // Load reservation data from the file
-        try (BufferedReader reader = new BufferedReader(new FileReader(reservationFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Split each line into reservation details
-                String[] reservationData = line.split("\t");
+        try {
+            List<CheckInConstru> reservations = checkInFile.loadReservations();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0); // 기존 데이터 초기화
 
-                // Ensure the data has the required length
-                if (reservationData.length >= 8) {
-                    String[] tableRow = new String[8];
-                    tableRow[0] = reservationData[0]; // 고유번호
-                    tableRow[1] = reservationData[1]; // 객실번호
-                    tableRow[2] = reservationData[2]; // 예약자
-                    tableRow[3] = reservationData[3]; // 전화번호
-                    tableRow[4] = reservationData[5]; // 금액
-                    tableRow[5] = reservationData[6]; // 체크인 날짜
-                    tableRow[6] = reservationData[7]; // 체크아웃 날짜
-                    tableRow[7] = reservationData[8]; // 결제 유형
-
-                    // Add the row to the table
-                    model.addRow(tableRow);
-                }
+            for (CheckInConstru reservation : reservations) {
+                // 객체의 데이터를 테이블 행으로 변환
+                String[] tableRow = {
+                    reservation.getUniqueId(),
+                    reservation.getRoomNumber(),
+                    reservation.getGuestName(),
+                    reservation.getPhoneNumber(),
+                    reservation.getPrice(),
+                    reservation.getCheckInDate(),
+                    reservation.getCheckOutDate(),
+                    reservation.getPaymentType()
+                };
+                model.addRow(tableRow);
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일을 읽는 중 오류가 발생: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "파일을 읽는 중 오류가 발생");
         }
+
     }//GEN-LAST:event_checkInButtonActionPerformed
 
     private void checkOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkOutButtonActionPerformed
@@ -628,89 +624,57 @@ public class CheckInOut extends javax.swing.JFrame {
             return;
         }
 
-        // 객실 번호 가져오기
         String roomNumber = (String) jTable4.getValueAt(selectedRow, 1);
+        CheckInFile checkInFile = new CheckInFile();
 
-        // 체크아웃 날짜 기준으로 비교
-        String checkOutDate = ""; // 체크아웃 날짜를 저장할 변수
-        try (BufferedReader reader = new BufferedReader(new FileReader(paths + "/src/checkIn_list.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t");
-                if (data[1].equals(roomNumber)) { // 객실 번호 일치 확인
-                    checkOutDate = data[6]; // 체크아웃 날짜 (파일의 6번째 인덱스)
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "체크아웃 날짜 처리 중 오류 발생: " + e.getMessage());
-            return;
-        }
-
-        if (checkOutDate.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "체크아웃 날짜를 찾을 수 없습니다.");
-            return;
-        }
-
-        // 현재 날짜와 시간 가져오기
-        Calendar calendar = Calendar.getInstance();
-        Date currentDate = calendar.getTime();
-
-        // 체크아웃 날짜의 오전 11시 가져오기
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date checkOutLimitTime;
         try {
-            checkOutLimitTime = dateFormat.parse(checkOutDate + " 11:00");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "체크아웃 날짜 형식 오류: " + e.getMessage());
-            return;
-        }
-
-        // 객실 요금 및 추가 요금 계산
-        int roomCharge = getRoomPrice(roomNumber); // 객실 기본 요금
-        int usageCharge = 0; // 기타 사용 요금
-        boolean additionalCharge = false; // 추가 요금 여부 플래그
-
-        // 체크아웃 시간이 오전 11시 이후인 경우 추가 요금 계산
-        if (currentDate.after(checkOutLimitTime)) {
-            roomCharge += getRoomPrice(roomNumber); // 추가 1박 요금 부과
-            additionalCharge = true;
-        }
-
-        // 기타 사용 요금 계산
-        File menuFile = new File(paths + "/src/menu_payment.txt");
-        try (BufferedReader reader = new BufferedReader(new FileReader(menuFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t");
-                if (data.length >= 6 && data[0].equals(roomNumber)) {
-                    int price = Integer.parseInt(data[2]);
-                    usageCharge += price;
-                }
+            // 체크인 데이터 가져오기
+            CheckInConstru checkInData = checkInFile.getCheckInData(roomNumber);
+            if (checkInData == null) {
+                JOptionPane.showMessageDialog(this, "체크아웃 데이터를 찾을 수 없습니다.");
+                return;
             }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "기타 사용 내역 처리 중 오류 발생: " + e.getMessage());
-            return;
+
+            // 체크아웃 시간 계산
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date checkOutLimitTime = dateFormat.parse(checkInData.getCheckOutDate() + " 11:00");
+            Date currentDate = Calendar.getInstance().getTime();
+
+            // 객실 요금 및 추가 요금 계산
+            int roomCharge = getRoomPrice(roomNumber);
+            boolean additionalCharge = false;
+            if (currentDate.after(checkOutLimitTime)) {
+                roomCharge += getRoomPrice(roomNumber); // 추가 요금
+                additionalCharge = true;
+            }
+
+            // 사용 내역 비용 계산
+            int usageCharge = checkInFile.calculateUsageCharge(roomNumber);
+
+            // 총 금액 계산
+            int totalAmount = roomCharge + usageCharge;
+
+            // UI 업데이트
+            jTextField5.setText(String.valueOf(roomCharge)); // 객실 요금
+            jTextField6.setText(String.valueOf(usageCharge)); // 사용 요금
+            jTextField4.setText(String.valueOf(totalAmount)); // 총 금액
+
+            if (additionalCharge) {
+                JOptionPane.showMessageDialog(this, "오전 11시 이후 체크아웃으로 인해 1박 요금이 추가 부과되었습니다.");
+            }
+
+            // 체크아웃 상세 데이터 로드
+            loadCheckoutDetails(roomNumber);
+
+            // 체크아웃 확인 창 표시
+            checkout_OK.setSize(460, 350);
+            checkout_OK.setResizable(false);
+            checkout_OK.setLocationRelativeTo(this);
+            checkout_OK.setVisible(true);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "체크아웃 처리 중 오류 발생: " + e.getMessage());
         }
-
-        // 총 금액 계산
-        int totalAmount = roomCharge + usageCharge;
-
-        // UI 업데이트
-        jTextField5.setText(String.valueOf(roomCharge)); // 객실 요금
-        jTextField6.setText(String.valueOf(usageCharge)); // 사용 요금
-        jTextField4.setText(String.valueOf(totalAmount)); // 총 금액
-
-        // 추가 요금 알림 메시지 (조건 만족 시만)
-        if (additionalCharge) {
-            JOptionPane.showMessageDialog(this, "오전 11시 이후 체크아웃으로 인해 1박 요금이 추가 부과되었습니다.");
-        }
-
-        // 체크아웃 확인 프레임 표시
-        checkout_OK.setSize(460, 350);
-        checkout_OK.setResizable(false);
-        checkout_OK.setLocationRelativeTo(this);
-        checkout_OK.setVisible(true);
     }//GEN-LAST:event_CO_checkOutButtonActionPerformed
 
 
@@ -727,37 +691,33 @@ public class CheckInOut extends javax.swing.JFrame {
             return;
         }
 
-        // 선택된 행에서 객실 번호 가져오기
+        // 선택된 객실 번호 가져오기
         DefaultTableModel model = (DefaultTableModel) jTable4.getModel();
         String roomNumber = (String) model.getValueAt(selectedRow, 1); // 객실 번호
 
-        // 사용 내역 테이블(jTable2) 초기화
+        // 사용 내역 테이블 초기화
         DefaultTableModel detailTableModel = (DefaultTableModel) jTable2.getModel();
-        detailTableModel.setRowCount(0); // 기존 데이터 제거
+        detailTableModel.setRowCount(0);
 
-        // menu_reservation.txt 파일에서 데이터 읽기
-        File usageFile = new File(paths + "/src/menu_payment.txt");
+        // CheckInFile 객체 생성
+        CheckInFile checkInFile = new CheckInFile();
 
-        if (usageFile.exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(usageFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] data = line.split("\t");
-                    if (data.length >= 6 && data[0].trim().equals(roomNumber.trim())) { // 객실 번호 비교
-                        // 데이터 구성
-                        String menu = data[1]; // 메뉴 이름
-                        int quantity = Integer.parseInt(data[3]); // 개수
-                        String reservationTime = data[4]; // 예약 시간
-                        String serviceType = data[5]; // 식당/룸서비스 구분
+        try {
+            // 메뉴 사용 내역 로드
+            List<String[]> menuUsage = checkInFile.loadMenuUsage(roomNumber);
 
-                        // 테이블에 데이터 추가
-                        detailTableModel.addRow(new Object[]{roomNumber, menu, quantity, reservationTime, serviceType});
-                    }
-                }
-            } catch (IOException e) {
+            // 테이블에 데이터 추가
+            for (String[] usage : menuUsage) {
+                String menu = usage[1];                // 메뉴 이름
+                int quantity = Integer.parseInt(usage[3]); // 개수
+                String reservationTime = usage[4];    // 예약 시간
+                String serviceType = usage[5];        // 식당/룸서비스 구분
+
+                detailTableModel.addRow(new Object[]{roomNumber, menu, quantity, reservationTime, serviceType});
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "menu_reservation.txt 파일이 존재하지 않습니다.");
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "사용 내역을 로드하는 중 오류가 발생했습니다: " + e.getMessage());
         }
     }//GEN-LAST:event_useHistoryActionPerformed
 
@@ -770,42 +730,28 @@ public class CheckInOut extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0); // 기존 테이블 데이터 초기화
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(reservationFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // 예약 데이터를 읽어서 배열로 분리
-                String[] reservationData = line.split("\t");
+        CheckInFile checkInFile = new CheckInFile();
 
-                // 데이터 구조가 유효한지 확인
-                if (reservationData.length >= 9) { // 최소 9개의 필드가 있어야 함
-                    boolean matches = false;
+        try {
+            // 검색 결과 로드
+            List<CheckInConstru> searchResults = checkInFile.searchReservations(keyword, searchCategory);
 
-                    // 검색어가 비어 있으면 모든 데이터를 추가
-                    if (keyword.isEmpty()) {
-                        matches = true; // 모든 데이터를 추가
-                    } else if ("이름".equals(searchCategory)) {
-                        matches = reservationData[2].contains(keyword); // 예약자 이름 검색
-                    } else if ("객실번호".equals(searchCategory)) {
-                        matches = reservationData[1].equals(keyword); // 객실번호 검색
-                    }
-
-                    // 조건에 맞는 데이터를 테이블에 추가
-                    if (matches) {
-                        String[] tableRow = new String[8];
-                        tableRow[0] = reservationData[0]; // 고유번호
-                        tableRow[1] = reservationData[1]; // 객실번호
-                        tableRow[2] = reservationData[2]; // 예약자
-                        tableRow[3] = reservationData[3]; // 전화번호
-                        tableRow[4] = reservationData[5]; // 금액
-                        tableRow[5] = reservationData[6]; // 체크인 날짜
-                        tableRow[6] = reservationData[7]; // 체크아웃 날짜
-                        tableRow[7] = reservationData[8]; // 결제 유형
-
-                        model.addRow(tableRow);
-                    }
-                }
+            // 검색 결과를 테이블에 추가
+            for (CheckInConstru reservation : searchResults) {
+                model.addRow(new Object[]{
+                    reservation.getUniqueId(),
+                    reservation.getRoomNumber(),
+                    reservation.getGuestName(),
+                    reservation.getPhoneNumber(),
+                    reservation.getPrice(),
+                    reservation.getCheckInDate(),
+                    reservation.getCheckOutDate(),
+                    reservation.getPaymentType()
+                });
             }
+
         } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "검색 중 오류가 발생");
         }
     }//GEN-LAST:event_searchButtonActionPerformed
 
@@ -881,44 +827,33 @@ public class CheckInOut extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_checkinButtonActionPerformed
 
-    private void loadCheckinList() {
-        DefaultTableModel checkinModel = (DefaultTableModel) jTable4.getModel(); // jTable4는 체크인 리스트 테이블
+    public void loadCheckinList() {
+        DefaultTableModel checkinModel = (DefaultTableModel) jTable4.getModel();
         checkinModel.setRowCount(0); // 기존 데이터 초기화
 
-        File checkInFile = new File(paths + "/src/checkIn_list.txt");
+        try {
+            // 데이터 로드 (CheckInFile 클래스를 통해 로드)
+            CheckInFile checkInFile = new CheckInFile();
+            List<CheckInConstru> checkInList = checkInFile.loadCheckInList();
 
-        if (checkInFile.exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] fullData = line.split("\t");
-
-                    // 배열에서 필요한 데이터를 선택하여 새로운 배열로 만듦
-                    if (fullData.length >= 8) {
-                        String[] tableRow = {
-                            fullData[0], // 고유번호
-                            fullData[1], // 객실 번호
-                            fullData[2], // 예약자
-                            fullData[3], // 전화번호
-                            fullData[4], // 금액
-                            fullData[7] // 결제 유형 (마지막 열)
-                        };
-
-                        // 테이블에 데이터 추가
-                        checkinModel.addRow(tableRow);
-                    } else {
-                        System.err.println("파일 데이터 오류: " + line); // 디버깅 메시지
-                    }
-                }
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "체크인 리스트를 불러오는 중 오류가 발생했습니다: " + e.getMessage());
+            // UI 테이블에 데이터 추가
+            for (CheckInConstru checkIn : checkInList) {
+                String[] tableRow = {
+                    checkIn.getUniqueId(), // 고유번호
+                    checkIn.getRoomNumber(), // 객실 번호
+                    checkIn.getGuestName(), // 예약자
+                    checkIn.getPhoneNumber(), // 전화번호
+                    checkIn.getPrice(), // 금액
+                    checkIn.getPaymentType() // 결제 유형
+                };
+                checkinModel.addRow(tableRow);
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "파일이 존재하지 않습니다.");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "체크인 리스트를 불러오는 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 
-    private void initializeCheckoutTable() {
+    public void initializeCheckoutTable() {
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{"고유번호", "객실 번호", "예약자", "전화번호", "금액", "결제 유형"}
@@ -934,46 +869,39 @@ public class CheckInOut extends javax.swing.JFrame {
             // 체크인 프레임의 부모로 예약 수정 창을 설정
             rm.setLocationRelativeTo(this);
 
-            // 예약 수정 창이 닫힐 때 체크인 데이터를 새로고침하도록 리스너 추가
-            rm.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosed(java.awt.event.WindowEvent e) {
-                    // 예약 수정 창이 닫히면 체크인 데이터를 새로고침
-                    refreshReservationList();
-                }
-            });
+            
             // 예약 수정 창 표시
             rm.setVisible(true);
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "예약 수정 화면을 여는 데 실패했습니다: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "예약 수정 화면을 여는 데 실패");
         }
     }//GEN-LAST:event_changeButtonActionPerformed
 
-    private void refreshReservationList() {
+    public void refreshReservationList() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0); // 기존 데이터 초기화
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(reservationFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] reservationData = line.split("\t");
-                if (reservationData.length >= 9) { // 데이터 유효성 확인
-                    String[] tableRow = new String[8];
-                    tableRow[0] = reservationData[0]; // 고유번호
-                    tableRow[1] = reservationData[1]; // 객실번호
-                    tableRow[2] = reservationData[2]; // 예약자
-                    tableRow[3] = reservationData[3]; // 전화번호
-                    tableRow[4] = reservationData[5]; // 금액
-                    tableRow[5] = reservationData[6]; // 체크인 날짜
-                    tableRow[6] = reservationData[7]; // 체크아웃 날짜
-                    tableRow[7] = reservationData[8]; // 결제 유형
-                    tableRow[8] = reservationData[9];
-                    model.addRow(tableRow);
-                }
+        try {
+            // CheckInFile 클래스 사용
+            CheckInFile checkInFile = new CheckInFile();
+            List<CheckInConstru> reservations = checkInFile.loadReservations();
+
+            // 테이블에 데이터 추가
+            for (CheckInConstru reservation : reservations) {
+                model.addRow(new Object[]{
+                    reservation.getUniqueId(),
+                    reservation.getRoomNumber(),
+                    reservation.getGuestName(),
+                    reservation.getPhoneNumber(),
+                    reservation.getPrice(),
+                    reservation.getCheckInDate(),
+                    reservation.getCheckOutDate(),
+                    reservation.getPaymentType()
+                });
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일을 다시 로드하는 중 오류가 발생했습니다: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "데이터 새로고침 중 오류 발생: " + e.getMessage());
         }
     }
 
@@ -999,13 +927,12 @@ public class CheckInOut extends javax.swing.JFrame {
             return;
         }
 
-        // 피드백 데이터를 저장할 형식 지정
-        String feedbackData = String.format("%s\t%s\n", roomNumber, feedback);
+        // 피드백 데이터 저장 형식 지정
+        String feedbackData = String.format("%s\t%s%n", roomNumber, feedback);
 
-        // 피드백 파일 경로 지정
-        String feedbackFilePath = paths + "/src/feedback.txt";
+        // 피드백 파일 경로 지정 (AppConstants 사용)
+        String feedbackFilePath = AppConstants.feedbackFile;
 
-        // 파일에 저장
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(feedbackFilePath, true))) {
             writer.write(feedbackData);
             JOptionPane.showMessageDialog(this, "피드백이 저장되었습니다.");
@@ -1013,7 +940,7 @@ public class CheckInOut extends javax.swing.JFrame {
             // 피드백 입력창 초기화
             jTextField2.setText("");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 저장 중 오류가 발생했습니다: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "피드백 저장 중 오류가 발생했습니다: " + e.getMessage());
         }
     }//GEN-LAST:event_feedback_saveActionPerformed
 
@@ -1039,43 +966,50 @@ public class CheckInOut extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "총 금액: " + totalAmount + "원\n체크아웃이 완료되었습니다.");
 
         // 파일 경로 정의
-        File checkInFile = new File(paths + "/src/checkIn_list.txt");
-        File checkOutFile = new File(paths + "/src/checkOut_list.txt");
-        List<String> updatedCheckInList = new ArrayList<>(); // 체크인 리스트를 업데이트할 데이터
-        StringBuilder checkOutEntry = new StringBuilder(); // 체크아웃 파일로 옮길 데이터
+        String checkInFilePath = AppConstants.checkinFile;
+        String checkOutFilePath = AppConstants.checkoutFile;
+
+        List<String> updatedCheckInList = new ArrayList<>();
+        String checkOutEntry = null;
 
         // 체크인 리스트에서 선택된 데이터 삭제 및 체크아웃 리스트로 이동
-        try (BufferedReader reader = new BufferedReader(new FileReader(checkInFile))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(checkInFilePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split("\t");
-                if (data.length > 1 && data[1].equals(roomNumber)) { // 선택된 객실 번호와 일치
-                    checkOutEntry.append(line).append("\n"); // 체크아웃 파일로 이동
+                if (data.length > 1 && data[1].equals(roomNumber)) {
+                    checkOutEntry = line; // 체크아웃 파일로 이동할 데이터 저장
                 } else {
-                    updatedCheckInList.add(line); // 유지할 데이터
+                    updatedCheckInList.add(line); // 유지할 데이터 저장
                 }
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "체크인 데이터를 업데이트하는 중 오류 발생: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "체크인 리스트 읽기 중 오류 발생: " + e.getMessage());
             return;
         }
 
         // 체크아웃 리스트 파일에 데이터 추가
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(checkOutFile, true))) { // true는 추가 모드
-            writer.write(checkOutEntry.toString());
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "체크아웃 데이터를 저장하는 중 오류 발생: " + e.getMessage());
+        if (checkOutEntry != null) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(checkOutFilePath, true))) {
+                writer.write(checkOutEntry);
+                writer.newLine();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "체크아웃 데이터 저장 중 오류 발생: " + e.getMessage());
+                return;
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "체크아웃할 데이터를 찾을 수 없습니다.");
             return;
         }
 
         // 체크인 리스트 파일 업데이트 (선택된 데이터 삭제 후 저장)
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(checkInFile))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(checkInFilePath))) {
             for (String updatedLine : updatedCheckInList) {
                 writer.write(updatedLine);
                 writer.newLine();
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "체크인 데이터를 저장하는 중 오류 발생: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "체크인 리스트 저장 중 오류 발생: " + e.getMessage());
             return;
         }
 
@@ -1133,7 +1067,7 @@ public class CheckInOut extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_checkout_searchButtonActionPerformed
 
-    private int getRoomPrice(String roomNumber) {
+    public int getRoomPrice(String roomNumber) {
         // roomNumber에서 층 정보 추출 (예: "101" → "1층")
         if (roomNumber == null || roomNumber.isEmpty()) {
             JOptionPane.showMessageDialog(this, "객실 번호가 유효하지 않습니다.");
@@ -1152,21 +1086,22 @@ public class CheckInOut extends javax.swing.JFrame {
 
         String roomPriceFilePath = paths + "/src/roomPrice.txt";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(roomPriceFilePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t");
+        try {
+            CheckInFile checkInFile = new CheckInFile(); // CheckInFile 클래스의 인스턴스 생성
+            List<String[]> roomPrices = checkInFile.loadRoomPrices(); // AppConstants.roompriceFile 사용
+
+            for (String[] data : roomPrices) {
                 if (data.length == 2 && data[0].equals(floor)) {
                     return Integer.parseInt(data[1].trim()); // 해당 층의 요금 반환
                 }
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "roomPrice.txt 파일을 읽는 중 오류가 발생했습니다: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "객실 요금을 불러오는 중 오류 발생: " + e.getMessage());
         }
         return 1; // 기본 요금 반환
     }
 
-    private void autoCancelUnsecuredReservations() {
+    public void autoCancelUnsecuredReservations() {
         try {
             List<String> remainingReservations = new ArrayList<>();
             List<String> cancelledReservations = new ArrayList<>();
@@ -1214,11 +1149,11 @@ public class CheckInOut extends javax.swing.JFrame {
             }
 
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 오류: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "파일 오류");
         }
     }
 
-    private void addExpectedCheckoutDates() {
+    public void addExpectedCheckoutDates() {
         List<String> updatedReservations = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(reservationFile))) {
@@ -1247,7 +1182,7 @@ public class CheckInOut extends javax.swing.JFrame {
                 }
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "체크아웃 날짜 오류: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "체크아웃 날짜 오류");
         }
 
         // 업데이트된 데이터를 reservation.txt에 저장
@@ -1257,11 +1192,11 @@ public class CheckInOut extends javax.swing.JFrame {
                 writer.newLine();
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "파일 저장 오류 : " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "파일 저장 오류");
         }
     }
 
-    private void markMandatoryPayments() {
+    public void markMandatoryPayments() {
         try {
             List<String> updatedReservations = new ArrayList<>();
 
@@ -1278,6 +1213,7 @@ public class CheckInOut extends javax.swing.JFrame {
                 while ((line = reader.readLine()) != null) {
                     String[] data = line.split("\t");
 
+                    // 배열 크기 확인
                     if (data.length >= 9) { // 최소 9개의 데이터가 있어야 함
                         String checkInDate = data[6]; // 체크인 날짜
                         String paymentType = data[8]; // 결제 유형
@@ -1285,10 +1221,15 @@ public class CheckInOut extends javax.swing.JFrame {
                         // 체크인 날짜가 오늘이고, 오후 6시 이후일 경우
                         if (today.equals(checkInDate) && currentHour >= 18 && "현금".equals(paymentType)) {
                             // "반드시 지불해야 함" 상태 추가
+                            if (data.length == 9) {
+                                data = Arrays.copyOf(data, 10); // 배열 크기 확장
+                            }
                             data[9] = "지불 해야함.";
                         }
-
                         updatedReservations.add(String.join("\t", data));
+                    } else {
+                        // 데이터가 불완전한 경우 경고 출력 (옵션)
+                        System.err.println("오류 발생");
                     }
                 }
             }
@@ -1307,6 +1248,28 @@ public class CheckInOut extends javax.swing.JFrame {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "파일 처리 중 오류 발생: " + e.getMessage());
         }
+    }
+
+    public void loadCheckoutDetails(String roomNumber) {
+        DefaultTableModel model = (DefaultTableModel) jTable5.getModel();
+        model.setRowCount(0);
+
+        CheckInFile checkInFile = new CheckInFile();
+
+        try {
+            List<String[]> menuUsage = checkInFile.loadMenuUsage(roomNumber);
+            for (String[] usage : menuUsage) {
+                model.addRow(new Object[]{
+                    roomNumber, usage[1], usage[3], usage[5]
+                });
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "체크아웃 상세 데이터 로드 중 오류 발생: " + e.getMessage());
+        }
+
+        // 테이블 갱신
+        jTable5.revalidate();
+        jTable5.repaint();
     }
 
     /**
